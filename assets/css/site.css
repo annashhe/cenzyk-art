@@ -234,28 +234,29 @@ img {
 .curve-stroke {
   fill: none;
   stroke: var(--curve-pale);
-  stroke-width: 42;
+  stroke-width: 18px;
+  vector-effect: non-scaling-stroke;
   stroke-linecap: round;
   stroke-linejoin: round;
-  opacity: 0.36;
+  opacity: 0.34;
 }
 
 .curve-stroke.thick {
-  stroke-width: 58;
+  stroke-width: 26px;
   stroke: var(--curve);
-  opacity: 0.3;
+  opacity: 0.28;
 }
 
 .curve-stroke.soft {
   stroke: var(--curve-ghost);
-  stroke-width: 48;
-  opacity: 0.26;
+  stroke-width: 20px;
+  opacity: 0.24;
 }
 
 .curve-stroke.volute {
-  stroke-width: 52;
+  stroke-width: 22px;
   stroke: var(--curve-pale);
-  opacity: 0.34;
+  opacity: 0.32;
 }
 
 .curve-fill {
@@ -343,21 +344,22 @@ img {
 
 .hero-visual .curve-stroke {
   stroke: var(--curve-pale);
-  opacity: 0.4;
-  stroke-width: 36;
+  opacity: 0.38;
+  stroke-width: 20px;
+  vector-effect: non-scaling-stroke;
 }
 
 .hero-visual .curve-stroke.thick,
 .hero-visual .curve-stroke.volute {
   stroke: var(--curve);
-  stroke-width: 48;
-  opacity: 0.32;
+  stroke-width: 28px;
+  opacity: 0.3;
 }
 
 .hero-visual .curve-stroke.soft {
   stroke: var(--curve-ghost);
-  stroke-width: 40;
-  opacity: 0.28;
+  stroke-width: 22px;
+  opacity: 0.26;
 }
 
 .hero-visual .curve-fill {
@@ -368,13 +370,14 @@ img {
 .cta-final .curve-stroke,
 .meeting-card .curve-stroke {
   stroke: var(--curve-pale);
-  opacity: 0.24;
-  stroke-width: 46;
+  opacity: 0.22;
+  stroke-width: 22px;
+  vector-effect: non-scaling-stroke;
 }
 
 .cta-final .curve-stroke.thick {
-  stroke-width: 64;
-  opacity: 0.2;
+  stroke-width: 30px;
+  opacity: 0.18;
 }
 
 @media (max-width: 900px) {
