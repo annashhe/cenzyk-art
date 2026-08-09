@@ -406,138 +406,121 @@ calc_cell(ws[f"I{prokat_total_row}"], f"=SUM(I{prokat_first}:I{prokat_last})", m
 ws[f"B{prokat_total_row}"] = "Итого прокат"
 ws[f"B{prokat_total_row}"].font = font_bold
 
-# --- Плазма / лазер: 10 позиций ---
-plasma_title = prokat_total_row + 2
-header_cell(ws[f"B{plasma_title}"], "ПЛАЗМА / ЛАЗЕР (до 10 позиций)", fill_section, font_section)
-ws.merge_cells(f"B{plasma_title}:I{plasma_title}")
-plasma_hdr = plasma_title + 2
-for col, title in [
-    ("B", "Позиция"),
-    ("C", "Сечение / описание"),
-    ("D", "Кол-во"),
-    ("E", "Ед."),
-    ("F", "Цена поставщика"),
-    ("G", "Сумма"),
-    ("H", "Себестоимость"),
-    ("I", "Наценка"),
-]:
-    header_cell(ws[f"{col}{plasma_hdr}"], title)
-plasma_first = plasma_hdr + 1
-plasma_last = plasma_first + 9  # 10 rows
-for r in range(plasma_first, plasma_last + 1):
-    ws[f"D{r}"] = 0
-    ws[f"E{r}"] = "шт"
-    ws[f"F{r}"] = 0
-    ws[f"H{r}"] = f'=IF(OR(D{r}="",F{r}=""),0,D{r}*F{r})'
-    ws[f"G{r}"] = f"=H{r}"
-    ws[f"I{r}"] = 0
-    for col in ["B", "C", "D", "E", "F"]:
-        ws[f"{col}{r}"].fill = fill_input
-        ws[f"{col}{r}"].border = thin
-    for col in ["G", "H", "I"]:
-        calc_cell(ws[f"{col}{r}"], fmt=money)
-    ws[f"F{r}"].number_format = money
-plasma_total_row = plasma_last + 1
-ws[f"F{plasma_total_row}"] = "Плазма/лазер — себестоимость:"
-calc_cell(ws[f"H{plasma_total_row}"], f"=SUM(H{plasma_first}:H{plasma_last})", money, bold=True)
+def write_markup_block(ws, start_title_row, title, col_b_header, col_c_header, n_rows=10, seeds=None):
+    """Блок с наценкой менеджера как у проката: H=себест, G=с наценкой, I=наценка."""
+    header_cell(ws[f"B{start_title_row}"], title, fill_section, font_section)
+    ws.merge_cells(f"B{start_title_row}:I{start_title_row}")
+    hdr = start_title_row + 2
+    for col, text in [
+        ("B", col_b_header),
+        ("C", col_c_header),
+        ("D", "Кол-во"),
+        ("E", "Ед."),
+        ("F", "Цена поставщика"),
+        ("G", "С наценкой менеджера"),
+        ("H", "Себестоимость"),
+        ("I", "Наценка менеджера"),
+    ]:
+        header_cell(ws[f"{col}{hdr}"], text)
+    first = hdr + 1
+    last = first + n_rows - 1
+    seeds = seeds or []
+    for idx, r in enumerate(range(first, last + 1)):
+        if idx < len(seeds):
+            b, c, price = seeds[idx]
+            ws[f"B{r}"] = b
+            ws[f"C{r}"] = c
+            ws[f"F{r}"] = price
+        else:
+            ws[f"F{r}"] = 0
+        ws[f"D{r}"] = 0
+        ws[f"E{r}"] = "шт"
+        ws[f"H{r}"] = f'=IF(OR(D{r}="",F{r}=""),0,D{r}*F{r})'
+        ws[f"G{r}"] = f"=H{r}*(1+Параметры!$C$6)"
+        ws[f"I{r}"] = f"=H{r}*Параметры!$C$6"
+        for col in ["B", "C", "D", "E", "F"]:
+            ws[f"{col}{r}"].fill = fill_input
+            ws[f"{col}{r}"].border = thin
+        for col in ["G", "H", "I"]:
+            calc_cell(ws[f"{col}{r}"], fmt=money)
+        ws[f"F{r}"].number_format = money
+    total_row = last + 1
+    short = title.split("(")[0].strip()
+    ws[f"F{total_row}"] = f"{short} — себестоимость:"
+    calc_cell(ws[f"G{total_row}"], f"=SUM(G{first}:G{last})", money, bold=True)
+    calc_cell(ws[f"H{total_row}"], f"=SUM(H{first}:H{last})", money, bold=True)
+    calc_cell(ws[f"I{total_row}"], f"=SUM(I{first}:I{last})", money, bold=True)
+    return first, last, total_row
+
+
+# --- Плазма / лазер: 10 позиций + наценка как у проката ---
+plasma_first, plasma_last, plasma_total_row = write_markup_block(
+    ws,
+    prokat_total_row + 2,
+    "ПЛАЗМА / ЛАЗЕР (до 10 позиций)",
+    "Позиция",
+    "Сечение / описание",
+)
 
 # --- Ковка: 10 позиций ---
-forge_title = plasma_total_row + 2
-header_cell(ws[f"B{forge_title}"], "КОВАНЫЕ ЭЛЕМЕНТЫ / СПЕЦ. ПРОКАТ (до 10 позиций)", fill_section, font_section)
-ws.merge_cells(f"B{forge_title}:I{forge_title}")
-forge_hdr = forge_title + 2
-for col, title in [
-    ("B", "Элемент / артикул"),
-    ("C", "Сечение"),
-    ("D", "Кол-во"),
-    ("E", "Ед."),
-    ("F", "Цена поставщика"),
-    ("G", "С наценкой"),
-    ("H", "Себестоимость"),
-    ("I", "Наценка менеджера"),
-]:
-    header_cell(ws[f"{col}{forge_hdr}"], title)
-forge_first = forge_hdr + 1
-forge_last = forge_first + 9
-# seed a couple of known arts from old template
-seed_forge = [("11.032", "12х6", 50), ("41.401", "12", 230)]
-for idx, r in enumerate(range(forge_first, forge_last + 1)):
-    if idx < len(seed_forge):
-        ws[f"B{r}"], ws[f"C{r}"], price = seed_forge[idx]
-        ws[f"F{r}"] = price
-    else:
-        ws[f"F{r}"] = 0
-    ws[f"D{r}"] = 0
-    ws[f"E{r}"] = "шт"
-    ws[f"H{r}"] = f'=IF(OR(D{r}="",F{r}=""),0,D{r}*F{r})'
-    ws[f"G{r}"] = f"=H{r}*(1+Параметры!$C$6)"
-    ws[f"I{r}"] = f"=H{r}*Параметры!$C$6"
-    for col in ["B", "C", "D", "E", "F"]:
-        ws[f"{col}{r}"].fill = fill_input
-        ws[f"{col}{r}"].border = thin
-    for col in ["G", "H", "I"]:
-        calc_cell(ws[f"{col}{r}"], fmt=money)
-    ws[f"F{r}"].number_format = money
-forge_total_row = forge_last + 1
-ws[f"F{forge_total_row}"] = "Ковка — себестоимость:"
-calc_cell(ws[f"G{forge_total_row}"], f"=SUM(G{forge_first}:G{forge_last})", money, bold=True)
-calc_cell(ws[f"H{forge_total_row}"], f"=SUM(H{forge_first}:H{forge_last})", money, bold=True)
-calc_cell(ws[f"I{forge_total_row}"], f"=SUM(I{forge_first}:I{forge_last})", money, bold=True)
+forge_first, forge_last, forge_total_row = write_markup_block(
+    ws,
+    plasma_total_row + 2,
+    "КОВАНЫЕ ЭЛЕМЕНТЫ / СПЕЦ. ПРОКАТ (до 10 позиций)",
+    "Элемент / артикул",
+    "Сечение",
+    seeds=[("11.032", "12х6", 50), ("41.401", "12", 230)],
+)
 
-# --- Токарка: 10 позиций ---
-turn_title = forge_total_row + 2
-header_cell(ws[f"B{turn_title}"], "ТОКАРНЫЕ РАБОТЫ (до 10 позиций)", fill_section, font_section)
-ws.merge_cells(f"B{turn_title}:I{turn_title}")
-turn_hdr = turn_title + 2
-for col, title in [
-    ("B", "Позиция"),
-    ("C", "Сечение / описание"),
-    ("D", "Кол-во"),
-    ("E", "Ед."),
-    ("F", "Цена"),
-    ("G", "Сумма"),
-    ("H", "Себестоимость"),
-    ("I", "Наценка"),
-]:
-    header_cell(ws[f"{col}{turn_hdr}"], title)
-turn_first = turn_hdr + 1
-turn_last = turn_first + 9
-for r in range(turn_first, turn_last + 1):
-    ws[f"D{r}"] = 0
-    ws[f"E{r}"] = "шт"
-    ws[f"F{r}"] = 0
-    ws[f"H{r}"] = f'=IF(OR(D{r}="",F{r}=""),0,D{r}*F{r})'
-    ws[f"G{r}"] = f"=H{r}"
-    ws[f"I{r}"] = 0
-    for col in ["B", "C", "D", "E", "F"]:
-        ws[f"{col}{r}"].fill = fill_input
-        ws[f"{col}{r}"].border = thin
-    for col in ["G", "H", "I"]:
-        calc_cell(ws[f"{col}{r}"], fmt=money)
-    ws[f"F{r}"].number_format = money
-turn_total_row = turn_last + 1
-ws[f"F{turn_total_row}"] = "Токарка — себестоимость:"
-calc_cell(ws[f"H{turn_total_row}"], f"=SUM(H{turn_first}:H{turn_last})", money, bold=True)
+# --- Токарка: 10 позиций + наценка как у проката ---
+turn_first, turn_last, turn_total_row = write_markup_block(
+    ws,
+    forge_total_row + 2,
+    "ТОКАРНЫЕ РАБОТЫ (до 10 позиций)",
+    "Позиция",
+    "Сечение / описание",
+)
 
-grand_row = turn_total_row + 2
+# --- Доп. комплектующие: 10 пустых позиций ---
+extra_first, extra_last, extra_total_row = write_markup_block(
+    ws,
+    turn_total_row + 2,
+    "ДОПОЛНИТЕЛЬНЫЕ КОМПЛЕКТУЮЩИЕ (до 10 позиций)",
+    "Комплектующая",
+    "Описание / артикул",
+)
+
+grand_row = extra_total_row + 2
 ws[f"F{grand_row}"] = "ВСЕГО металл — себестоимость:"
 ws[f"F{grand_row}"].font = font_bold
 calc_cell(
     ws[f"H{grand_row}"],
-    f"=H{prokat_total_row}+H{plasma_total_row}+H{forge_total_row}+H{turn_total_row}",
+    (
+        f"=H{prokat_total_row}+H{plasma_total_row}+H{forge_total_row}"
+        f"+H{turn_total_row}+H{extra_total_row}"
+    ),
     money,
     bold=True,
 )
 ws[f"H{grand_row}"].fill = fill_good
 ws[f"H{grand_row}"].font = font_big
 
-ws[f"F{grand_row + 1}"] = "ВСЕГО наценка менеджера с металла (прокат+ковка):"
+ws[f"F{grand_row + 1}"] = "ВСЕГО наценка менеджера с листа Металл:"
 ws[f"F{grand_row + 1}"].font = font_bold
-calc_cell(ws[f"H{grand_row + 1}"], f"=I{prokat_total_row}+I{forge_total_row}", money, bold=True)
+calc_cell(
+    ws[f"H{grand_row + 1}"],
+    (
+        f"=I{prokat_total_row}+I{plasma_total_row}+I{forge_total_row}"
+        f"+I{turn_total_row}+I{extra_total_row}"
+    ),
+    money,
+    bold=True,
+)
 ws[f"H{grand_row + 1}"].fill = fill_good
 
 ws[f"B{grand_row + 3}"] = (
-    "Обновление прайса: меняйте жёлтые цены в колонке F. Кол-во D — под конкретный заказ. "
+    "Обновление прайса: меняйте жёлтые цены в колонке F. Кол-во D — под заказ. "
+    "Прокат, плазма, ковка, токарка и комплектующие — с наценкой менеджера. "
     "Итоги уходят в Калькуляцию автоматически."
 )
 ws[f"B{grand_row + 3}"].font = font_note
@@ -556,6 +539,7 @@ METAL_LINKS = {
     "plasma": f"Металл!H{plasma_total_row}",
     "forge": f"Металл!H{forge_total_row}",
     "turn": f"Металл!H{turn_total_row}",
+    "extra": f"Металл!H{extra_total_row}",
 }
 print("Metal totals:", METAL_LINKS, "prokat rows", prokat_first, prokat_last)
 
@@ -648,9 +632,10 @@ add("Металл", "Транспорт: микроавтобус (2ч)", "тр�
 add("Металл", "Транспорт: бортовая 4м (1ч)", "транспорт", 1500, 0, "рейс")
 add("Металл", "Транспорт: бортовая 6м (1ч)", "транспорт", 3500, 0, "рейс")
 add("Металл", "Металлопрокат (лист Металл)", "закупка", None, 1, "сводка", "", "metal_cost")
-add("Металл", "Лазер / плазма (лист Металл)", "услуга", None, 1, "сводка", "", "metal_plasma")
+add("Металл", "Лазер / плазма (лист Металл)", "закупка", None, 1, "сводка", "", "metal_plasma")
 add("Металл", "Ков. элементы / спец. прокат", "закупка", None, 1, "сводка", "", "metal_forge")
-add("Металл", "Токарные работы (лист Металл)", "услуга", None, 1, "сводка", "", "metal_turn")
+add("Металл", "Токарные работы (лист Металл)", "закупка", None, 1, "сводка", "", "metal_turn")
+add("Металл", "Доп. комплектующие (лист Металл)", "закупка", None, 1, "сводка", "", "metal_extra")
 
 add_stage("4. Производство")
 add("Производство", "Аренда цеха", "аренда", 2000, 0, "день", "", "rent")
@@ -749,6 +734,9 @@ for item in rows:
     elif special == "metal_turn":
         ws[f"E{r}"] = f"={METAL_LINKS['turn']}"
         ws[f"F{r}"] = 1
+    elif special == "metal_extra":
+        ws[f"E{r}"] = f"={METAL_LINKS['extra']}"
+        ws[f"F{r}"] = 1
     else:
         ws[f"E{r}"] = price if price is not None else 0
 
@@ -760,7 +748,7 @@ for item in rows:
         ws[f"{col}{r}"].border = thin
     for col in ["C", "D", "E", "F", "G", "L"]:
         ws[f"{col}{r}"].fill = fill_input
-    if special in ("rent", "metal_cost", "metal_plasma", "metal_forge", "metal_turn"):
+    if special in ("rent", "metal_cost", "metal_plasma", "metal_forge", "metal_turn", "metal_extra"):
         ws[f"E{r}"].fill = fill_calc
     if special and str(special).startswith("metal"):
         ws[f"F{r}"].fill = fill_calc
@@ -888,7 +876,7 @@ ws["B2"].font = font_title
 steps = [
     "ГЛАВНЫЙ КОНТУР (для цены КП):",
     "1. «Параметры» — % менеджера, целевая/мин. маржа, НПД, аренда/день.",
-    "2. «Металл» — в каталоге проката поставьте кол-во штанг (шт = 6 м). Цены уже загружены; при смене прайса правьте колонку F.",
+    "2. «Металл» — кол-во штанг проката (шт = 6 м), плюс плазма/ковка/токарка/комплектующие. На все эти блоки — наценка менеджера.",
     "3. «Калькуляция» — количества по этапам (дни, рейсы, материалы).",
     "4. «Сводка» — смотрите рекомендуемую цену, впишите цену КП в жёлтую ячейку, проверьте статус.",
     "",
@@ -921,5 +909,6 @@ print(
     f"Prokat {prokat_first}-{prokat_last} total@{prokat_total_row}; "
     f"plasma {plasma_first}-{plasma_last} @{plasma_total_row}; "
     f"forge {forge_first}-{forge_last} @{forge_total_row}; "
-    f"turn {turn_first}-{turn_last} @{turn_total_row}"
+    f"turn {turn_first}-{turn_last} @{turn_total_row}; "
+    f"extra {extra_first}-{extra_last} @{extra_total_row}"
 )
