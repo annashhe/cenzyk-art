@@ -15,89 +15,219 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/site.css" />
-  <style>
-    .chooser {
-      min-height: 100svh;
-      display: grid;
-      place-items: center;
-      padding: 3rem 1rem;
-      background:
-        linear-gradient(rgba(17,17,15,.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(17,17,15,.05) 1px, transparent 1px),
-        var(--bg);
-      background-size: 36px 36px, 36px 36px, auto;
-    }
-    .chooser-box {
-      width: min(860px, 100%);
-      border: 4px solid var(--ink);
-      background: var(--panel);
-      padding: clamp(1.3rem, 4vw, 2.2rem);
-      box-shadow: 8px 8px 0 var(--ink);
-    }
-    .chooser h1 {
-      font-family: var(--font-display);
-      font-size: clamp(2.2rem, 6vw, 3.6rem);
-      line-height: 0.9;
-      margin: 0 0 0.8rem;
-      max-width: 11ch;
-      text-transform: uppercase;
-    }
-    .chooser .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0;
-      margin-top: 1.4rem;
-      border: 3px solid var(--ink);
-    }
-    @media (max-width: 700px) {
-      .chooser .grid { grid-template-columns: 1fr; }
-      .chooser-box { box-shadow: 5px 5px 0 var(--ink); }
-    }
-    .chooser a.card {
-      display: block;
-      padding: 1rem;
-      border-right: 2px solid var(--ink);
-      border-bottom: 2px solid var(--ink);
-      background: #fffef8;
-    }
-    .chooser a.card:nth-child(2n) { border-right: 0; }
-    .chooser a.card:hover { background: var(--accent); }
-    .chooser a.card strong {
-      font-family: var(--font-display);
-      display: block;
-      margin-bottom: 0.35rem;
-      text-transform: uppercase;
-      font-size: 1.05rem;
-    }
-    .chooser a.card span {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.04em;
-      color: var(--muted);
-    }
-  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Илай Саматов — Кузнец-Дизайнер",
+    "url": "https://cenzyk.art/",
+    "telephone": "+79520589278",
+    "email": "ilja.samatov@yandex.ru",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Ручейная улица, 2А",
+      "addressLocality": "Калининград",
+      "addressCountry": "RU"
+    },
+    "areaServed": "Калининградская область"
+  }
+  </script>
 </head>
 <body class="grain">
-  <main class="chooser">
-    <div class="chooser-box">
-      <p class="eyebrow">cenzyk.art · brutal series</p>
-      <h1>Илай — Кузнец-Дизайнер</h1>
-      <p class="lead">Текст и структура на месте. Стилистика пересобрана в брутализм по вашим Pinterest-референсам: зерно, сетка, жёсткие рамки, жёлтый сигнал.</p>
-      <div class="cta-row">
-        <a class="btn btn-primary" href="preview/">Смотреть варианты</a>
-        <a class="btn btn-ghost" href="3d-primerka/">3D-посадка</a>
+  <header class="site-header">
+    <a class="brand" href="./">
+      <span class="brand-name">Илай Саматов</span>
+      <span class="brand-role">Кузнец / Дизайнер / Металл</span>
+    </a>
+    <nav class="nav" aria-label="Основное меню">
+      <a href="balkony/">Балконы</a>
+      <a href="zabory/">Заборы</a>
+      <a href="lestnicy/">Лестницы</a>
+      <a href="mebel/">Мебель</a>
+      <a href="3d-primerka/">3D</a>
+      <a class="nav-cta" href="kontakty/">Связь</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="curve-layer curve-draw" aria-hidden="true">
+        <svg viewBox="0 0 1200 800" preserveAspectRatio="none">
+          <path class="curve-stroke soft" d="M-20,620 C180,520 260,760 480,640 S820,480 980,560 1220,700 1220,700" pathLength="1" />
+          <path class="curve-stroke" d="M40,180 C220,40 420,260 620,120 S980,40 1180,160" pathLength="1" />
+        </svg>
       </div>
-      <div class="grid">
-        <a class="card" href="preview/v1-newsprint-brutal.html"><strong>V1 Newsprint</strong><span>зерно + жёлтый вырез</span></a>
-        <a class="card" href="preview/v2-concrete-signal.html"><strong>V2 Concrete</strong><span>тёмный сигнал</span></a>
-        <a class="card" href="preview/v3-blueprint-brutal.html"><strong>V3 Blueprint</strong><span>чертёж + сетка</span></a>
-        <a class="card" href="preview/v4-poster-cut.html"><strong>V4 Poster Cut</strong><span>плакатный кроп</span></a>
-        <a class="card" href="preview/v5-metal-stencil.html"><strong>V5 Stencil</strong><span>трафарет / штамп</span></a>
-        <a class="card" href="balkony/"><strong>Балконы</strong><span>30 / 40 / 50 тыс. ₽/м²</span></a>
+      <div class="hero-rail" aria-hidden="true">SAMATOV · METAL · KGD</div>
+      <div class="hero-copy">
+        <p class="tagline">Готовые решения от проекта до результата</p>
+        <p class="brand-hero">Илай — Кузнец-Дизайнер</p>
+        <h1>Сначала встреча и ясность — потом металл на века</h1>
+        <p>Помогаю владельцам домов и дизайнерам воплотить желание в металле: технически верно, стилистически точно, с предсказуемым результатом. Сайт — доказательство экспертизы. Главная цель — разбор вашей задачи со мной.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="kontakty/">Обсудить задачу</a>
+          <a class="btn btn-ghost" href="3d-primerka/">Бесплатная 3D-примерка</a>
+        </div>
+      </div>
+      <div class="hero-visual" role="img" aria-label="Работа в кузнице">
+        <div class="curve-layer curve-draw" aria-hidden="true">
+          <svg viewBox="0 0 600 900" preserveAspectRatio="xMidYMid slice">
+            <path class="curve-stroke thick" d="M80,820 C120,620 90,480 210,360 S420,220 460,80" pathLength="1" />
+            <path class="curve-stroke" d="M520,860 C480,700 540,560 400,430 S220,300 180,140" pathLength="1" />
+            <path class="curve-fill" d="M140,780 Q200,640 170,520 Q140,400 250,300 Q360,200 340,90 L360,90 Q380,210 270,320 Q150,430 190,540 Q230,660 160,800 Z" />
+          </svg>
+        </div>
+        <span class="arch-accent" aria-hidden="true"></span>
+        <span class="arch-accent small" aria-hidden="true"></span>
+      </div>
+    </section>
+
+    <section class="section services" id="services">
+      <div class="curve-layer" aria-hidden="true">
+        <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
+          <path class="curve-stroke soft" d="M-10,300 C200,180 340,360 560,240 S900,120 1210,220" />
+        </svg>
+      </div>
+      <div class="wrap">
+        <p class="eyebrow">01 / Направления</p>
+        <h2>Заборы · Балконы · Лестницы · Мебель</h2>
+        <p class="lead">Сезонный пик — ограждения. Мебель и интерьер держат мастерскую занятой круглый год.</p>
+        <div class="service-grid">
+          <a class="service" href="balkony/">
+            <span class="idx">A1</span>
+            <h3>Балконы</h3>
+            <p>Сварные и кованые. 3D до производства.</p>
+            <span class="meta">от 30 000 ₽/м²</span>
+          </a>
+          <a class="service" href="zabory/">
+            <span class="idx">A2</span>
+            <h3>Заборы</h3>
+            <p>Ограда как архитектура участка — под ключ.</p>
+            <span class="meta">разбор задачи</span>
+          </a>
+          <a class="service" href="lestnicy/">
+            <span class="idx">A3</span>
+            <h3>Лестницы</h3>
+            <p>Перила и ограждения как акцент дома.</p>
+            <span class="meta">разбор задачи</span>
+          </a>
+          <a class="service" href="mebel/">
+            <span class="idx">A4</span>
+            <h3>Мебель</h3>
+            <p>Интерьер и МАФ вне сезона.</p>
+            <span class="meta">разбор задачи</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section proof" id="proof">
+      <div class="wrap">
+        <p class="eyebrow">02 / Экспертиза</p>
+        <h2>Доказательства, не обещания</h2>
+        <div class="proof-grid">
+          <article>
+            <h3>11+ лет</h3>
+            <p>Кузнец, сварщик, сборщик, слесарь. Веду проект лично — с командой на производстве.</p>
+          </article>
+          <article>
+            <h3>Технолог</h3>
+            <p>Холодная/горячая ковка, сварка, доводка. Желание клиента — в правильной технике и стиле.</p>
+          </article>
+          <article>
+            <h3>Гильдия</h3>
+            <p>Школа Эдуарда Оганисяна — Гильдия кузнецов и художников Калининграда.</p>
+          </article>
+          <article>
+            <h3>10 лет</h3>
+            <p>Гарантия. Договор самозанятого. Оплата 60 / 30 / 10.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section meeting" id="meeting">
+      <div class="wrap meeting-box">
+        <div>
+          <p class="eyebrow">03 / Продукт сайта</p>
+          <h2>Не «купить сразу» — встреча, где станет ясно</h2>
+          <p class="lead">Хочется качественно, а бюджет жмёт. На разборе скажу, что реально в ваших рамках и стоит ли запускать производство.</p>
+          <ul class="checklist">
+            <li>Задача, референсы, ограничения</li>
+            <li>Путь: эскиз → смета → цех → монтаж</li>
+            <li>Простые ограждения — бесплатная 3D-примерка</li>
+            <li>Сложная ковка — концепт и техрешение</li>
+          </ul>
+        </div>
+        <aside class="meeting-card">
+          <div class="curve-layer" aria-hidden="true">
+            <svg viewBox="0 0 400 500" preserveAspectRatio="none">
+              <path class="curve-stroke" d="M40,460 C90,320 60,220 180,140 S340,60 380,20" style="stroke:#f3c84a" />
+            </svg>
+          </div>
+          <p class="stamp">MEETING</p>
+          <h3>Связь</h3>
+          <a class="btn btn-primary" href="tel:+79520589278">Звонок</a>
+          <a class="btn btn-ghost" href="https://t.me/Cenzyk" rel="noopener">Telegram</a>
+          <a class="btn btn-ghost" href="3d-primerka/">Заявка 3D</a>
+          <p class="mono">KGD + OBLAST // TURNKEY</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section process" id="process">
+      <div class="wrap">
+        <p class="eyebrow">04 / Процесс</p>
+        <h2>От желания до монтажа</h2>
+        <ol class="steps">
+          <li><strong>01 Разбор</strong><span>Фото, размеры, стиль, бюджет</span></li>
+          <li><strong>02 Эскиз / 3D</strong><span>Результат до оплаты цеха</span></li>
+          <li><strong>03 Смета</strong><span>Договор и гарантия до 10 лет</span></li>
+          <li><strong>04 Цех</strong><span>60% · 30% · 10%</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section cta-final">
+      <div class="curve-layer" aria-hidden="true">
+        <svg viewBox="0 0 1200 360" preserveAspectRatio="none">
+          <path class="curve-stroke thick" d="M-20,280 C220,80 420,300 680,140 S980,40 1220,180" style="stroke:#f3c84a" />
+        </svg>
+      </div>
+      <div class="wrap" style="position:relative;z-index:2">
+        <p class="eyebrow light">05 / Next</p>
+        <h2>Есть задача по металлу?</h2>
+        <p>Напишите или позвоните — сделаем правильно и на века.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="kontakty/">Обсудить задачу</a>
+          <a class="btn btn-ghost" href="3d-primerka/">3D для Директа</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <p class="brand-name">Илай Саматов</p>
+        <p class="mono">KUZNETS-DESIGNER // KGD</p>
+        <p class="muted">Готовые решения от проекта до результата</p>
+      </div>
+      <div>
+        <p><a href="tel:+79520589278">+7 952 058-92-78</a></p>
+        <p><a href="mailto:ilja.samatov@yandex.ru">ilja.samatov@yandex.ru</a></p>
+        <p class="muted">Калининград и область</p>
+      </div>
+      <div>
+        <p><a href="https://t.me/Cenzyk" rel="noopener">Telegram</a></p>
+        <p><a href="https://t.me/CenzykT_G" rel="noopener">Канал</a></p>
+        <p><a href="privacy/">ПДн</a></p>
       </div>
     </div>
-  </main>
+    <p class="copy">© Саматов И. В. / 2026 / forged curves</p>
+  </footer>
+
   <script src="assets/js/consent-analytics.js" defer></script>
   <script src="assets/js/cookie-notice.js" defer></script>
+  <script src="assets/js/site-motion.js" defer></script>
 </body>
 </html>
