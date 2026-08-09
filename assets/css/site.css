@@ -327,35 +327,60 @@ img {
 
 .hero-visual .curve-layer {
   filter: none;
-  mix-blend-mode: screen;
+  mix-blend-mode: normal;
   opacity: 1;
 }
 
 .hero-visual .curve-stroke {
-  stroke: var(--accent-2);
+  stroke: var(--accent);
   opacity: 0.95;
+  stroke-width: 1.6;
+}
+
+.hero-visual .curve-stroke.thick {
+  stroke: var(--accent-2);
+  stroke-width: 2.4;
+  opacity: 0.92;
+}
+
+.hero-visual .curve-fill {
+  fill: var(--accent);
+  opacity: 0.22;
 }
 
 .hero-visual .arch-accent {
   position: absolute;
-  width: 34%;
-  aspect-ratio: 1.1 / 1;
-  top: 14%;
-  right: 12%;
-  border: 1.5px solid var(--accent);
+  width: 36%;
+  aspect-ratio: 1.05 / 1;
+  top: 12%;
+  right: 10%;
+  border: 1.5px solid transparent;
+  border-top-color: var(--accent-2);
+  border-left-color: var(--accent);
+  border-right-color: var(--accent-deep);
   border-bottom: 0;
   border-radius: 999px 999px 0 0;
-  opacity: 0.9;
+  background: linear-gradient(180deg, rgba(243, 200, 74, 0.28), rgba(243, 200, 74, 0));
+  opacity: 0.95;
   z-index: 3;
   pointer-events: none;
 }
 
 .hero-visual .arch-accent.small {
-  width: 18%;
-  top: 38%;
-  right: 38%;
-  border-color: var(--accent-2);
-  opacity: 0.75;
+  width: 20%;
+  top: 34%;
+  right: 36%;
+  background: linear-gradient(180deg, rgba(232, 184, 0, 0.35), rgba(232, 184, 0, 0));
+  border-top-color: var(--accent);
+  opacity: 0.9;
+}
+
+.hero-visual .arch-accent.tiny {
+  width: 12%;
+  top: 52%;
+  right: 22%;
+  background: linear-gradient(180deg, rgba(201, 151, 0, 0.3), transparent);
+  border-top-color: var(--accent-deep);
 }
 
 @media (max-width: 900px) {
