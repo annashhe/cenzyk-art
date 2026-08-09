@@ -234,33 +234,33 @@ img {
 .curve-stroke {
   fill: none;
   stroke: var(--curve-pale);
-  stroke-width: 10;
+  stroke-width: 42;
   stroke-linecap: round;
   stroke-linejoin: round;
-  opacity: 0.42;
+  opacity: 0.36;
 }
 
 .curve-stroke.thick {
-  stroke-width: 16;
+  stroke-width: 58;
   stroke: var(--curve);
-  opacity: 0.34;
+  opacity: 0.3;
 }
 
 .curve-stroke.soft {
   stroke: var(--curve-ghost);
-  stroke-width: 12;
-  opacity: 0.28;
+  stroke-width: 48;
+  opacity: 0.26;
 }
 
 .curve-stroke.volute {
-  stroke-width: 14;
+  stroke-width: 52;
   stroke: var(--curve-pale);
-  opacity: 0.38;
+  opacity: 0.34;
 }
 
 .curve-fill {
   fill: var(--curve-ghost);
-  opacity: 0.16;
+  opacity: 0.14;
 }
 
 /* —— Homepage hero (V1 layout) —— */
@@ -343,38 +343,38 @@ img {
 
 .hero-visual .curve-stroke {
   stroke: var(--curve-pale);
-  opacity: 0.48;
-  stroke-width: 12;
+  opacity: 0.4;
+  stroke-width: 36;
 }
 
 .hero-visual .curve-stroke.thick,
 .hero-visual .curve-stroke.volute {
   stroke: var(--curve);
-  stroke-width: 18;
-  opacity: 0.36;
+  stroke-width: 48;
+  opacity: 0.32;
 }
 
 .hero-visual .curve-stroke.soft {
   stroke: var(--curve-ghost);
-  stroke-width: 14;
-  opacity: 0.3;
+  stroke-width: 40;
+  opacity: 0.28;
 }
 
 .hero-visual .curve-fill {
   fill: var(--curve-ghost);
-  opacity: 0.18;
+  opacity: 0.16;
 }
 
 .cta-final .curve-stroke,
 .meeting-card .curve-stroke {
   stroke: var(--curve-pale);
-  opacity: 0.28;
-  stroke-width: 14;
+  opacity: 0.24;
+  stroke-width: 46;
 }
 
 .cta-final .curve-stroke.thick {
-  stroke-width: 20;
-  opacity: 0.22;
+  stroke-width: 64;
+  opacity: 0.2;
 }
 
 @media (max-width: 900px) {
@@ -881,18 +881,11 @@ img {
 }
 
 /* motion helpers */
-.curve-draw .curve-stroke {
+/* Curves stay visible; optional soft draw only if JS adds .is-drawing */
+.curve-draw .curve-stroke.is-drawing {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  animation: curveIn 1.4s ease forwards;
-}
-
-.curve-draw .curve-stroke:nth-child(2) {
-  animation-delay: 0.12s;
-}
-
-.curve-draw .curve-stroke:nth-child(3) {
-  animation-delay: 0.24s;
+  animation: curveIn 1.6s ease forwards;
 }
 
 @keyframes curveIn {
@@ -902,7 +895,7 @@ img {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .curve-draw .curve-stroke {
+  .curve-draw .curve-stroke.is-drawing {
     animation: none;
     stroke-dashoffset: 0;
   }

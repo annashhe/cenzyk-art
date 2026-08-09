@@ -12,31 +12,6 @@
     });
   }
 
-  // Draw forge curves when in view
-  document.querySelectorAll('.curve-layer:not(.curve-draw)').forEach(function (layer) {
-    var paths = layer.querySelectorAll('.curve-stroke');
-    if (!paths.length || !('IntersectionObserver' in window)) return;
-    paths.forEach(function (p) {
-      p.style.strokeDasharray = '1';
-      p.style.strokeDashoffset = '1';
-      if (!p.getAttribute('pathLength')) p.setAttribute('pathLength', '1');
-    });
-    var io = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          entry.target.querySelectorAll('.curve-stroke').forEach(function (p, i) {
-            p.style.transition = 'stroke-dashoffset 1.2s ease ' + i * 90 + 'ms';
-            p.style.strokeDashoffset = '0';
-          });
-          io.unobserve(entry.target);
-        });
-      },
-      { threshold: 0.2 }
-    );
-    io.observe(layer);
-  });
-
   var revealEls = document.querySelectorAll('.service, .proof article, .steps li, .meeting-card, .price-card');
   if (!('IntersectionObserver' in window) || !revealEls.length) return;
 
