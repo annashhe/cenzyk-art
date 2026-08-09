@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>V5 · Metal Dossier · Илай — Кузнец-Дизайнер</title>
+  <meta name="description" content="Готовые решения от проекта до результата. Сначала встреча и ясность — потом металл на века" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0; line-height:1.55; text-rendering:optimizeLegibility;}
+a{color:inherit}
+img{max-width:100%; display:block}
+.wrap{width:min(1120px, calc(100% - 2rem)); margin:0 auto;}
+.site-header{
+  position:fixed; inset:0 0 auto 0; z-index:20;
+  display:flex; justify-content:space-between; align-items:center; gap:1rem;
+  padding:.9rem 1.25rem; backdrop-filter: blur(10px);
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  border-bottom:1px solid var(--line);
+}
+.brand{text-decoration:none; display:flex; flex-direction:column; line-height:1.1}
+.brand-name{font-family:var(--font-display); font-weight:800; font-size:1.05rem}
+.brand-role{font-size:.72rem; color:var(--muted); letter-spacing:.04em; text-transform:uppercase}
+.nav{display:flex; flex-wrap:wrap; gap:.85rem; align-items:center; font-size:.92rem}
+.nav a{text-decoration:none; color:var(--muted)}
+.nav a:hover{color:var(--ink)}
+.nav-cta{background:var(--accent); color:var(--accent-ink)!important; padding:.45rem .8rem; font-weight:700}
+.eyebrow{font-size:.75rem; letter-spacing:.12em; text-transform:uppercase; color:var(--khaki); font-weight:700; margin:0 0 .6rem}
+.section{padding:5rem 0}
+.section h2{font-family:var(--font-display); font-size:clamp(1.7rem, 3vw, 2.5rem); line-height:1.1; margin:0 0 1rem; letter-spacing:-.02em; max-width:22ch}
+.lead{color:var(--muted); max-width:58ch; margin:0 0 2rem}
+.service-grid,.proof-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem}
+@media (max-width:700px){ .service-grid,.proof-grid{grid-template-columns:1fr} .nav{display:none} }
+.service,.proof article{
+  border:1px solid var(--line); padding:1.25rem 1.2rem; text-decoration:none; background:color-mix(in srgb, var(--bg-2) 65%, white);
+  transition: transform .25s ease, border-color .25s ease;
+}
+.service:hover,.proof article:hover{transform:translateY(-2px); border-color: color-mix(in srgb, var(--accent) 70%, var(--line));}
+.service h3,.proof h3{font-family:var(--font-display); margin:0 0 .5rem; font-size:1.25rem}
+.service span{display:inline-block; margin-top:1rem; font-weight:700; color:var(--khaki)}
+.meeting-box{display:grid; grid-template-columns:1.3fr .7fr; gap:1.5rem; align-items:stretch}
+@media (max-width:800px){.meeting-box{grid-template-columns:1fr}}
+.meeting-card{border:1px solid var(--line); padding:1.25rem; background:var(--metal); color:#f4f1e8; display:flex; flex-direction:column; gap:.7rem}
+.meeting-card h3{font-family:var(--font-display); margin:0}
+.checklist{padding-left:1.1rem; color:var(--muted)}
+.checklist li{margin:.4rem 0}
+.steps{list-style:none; padding:0; margin:0; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; counter-reset:s}
+@media (max-width:800px){.steps{grid-template-columns:1fr 1fr}}
+.steps li{border-top:3px solid var(--accent); padding-top:.8rem; display:flex; flex-direction:column; gap:.35rem}
+.steps li strong{font-family:var(--font-display); font-size:1.1rem}
+.steps li span{color:var(--muted); font-size:.95rem}
+.btn{display:inline-flex; align-items:center; justify-content:center; text-decoration:none; padding:.85rem 1.15rem; font-weight:700; border:1px solid transparent; font-family:var(--font-body)}
+.btn-primary{background:var(--accent); color:var(--accent-ink)}
+.btn-ghost{border-color:currentColor; background:transparent}
+.cta-row{display:flex; flex-wrap:wrap; gap:.75rem; margin-top:1.2rem}
+.cta-final{background:var(--metal); color:#f4f1e8}
+.cta-final .btn-ghost{border-color:rgba(244,241,232,.5); color:#f4f1e8}
+.site-footer{padding:3rem 0 2rem; border-top:1px solid var(--line); background:var(--bg-2)}
+.footer-grid{width:min(1120px, calc(100% - 2rem)); margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem}
+@media (max-width:700px){.footer-grid{grid-template-columns:1fr}}
+.footer-grid a{text-decoration:none}
+.muted{color:var(--muted)}
+.tiny{font-size:.8rem; color:rgba(244,241,232,.7)}
+.copy{width:min(1120px, calc(100% - 2rem)); margin:1.5rem auto 0; color:var(--muted); font-size:.85rem}
+.variant-badge{
+  position:fixed; right:12px; bottom:12px; z-index:30;
+  background:var(--ink); color:#fff; padding:.45rem .7rem; font-size:.75rem; letter-spacing:.04em; text-transform:uppercase;
+}
+.variant-badge a{color:var(--accent); margin-left:.5rem}
+
+
+:root {
+  --bg: #f2efe8;
+  --bg-2: #e5e0d4;
+  --ink: #171916;
+  --muted: #5b5f56;
+  --khaki: #45503c;
+  --accent: #e0b000;
+  --accent-ink: #171916;
+  --metal: #2c302c;
+  --line: rgba(23,25,22,.18);
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "IBM Plex Sans", sans-serif;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); }
+.hero {
+  min-height: 100svh; padding: 7rem 1rem 3rem;
+  display:grid; place-items:center;
+}
+.dossier {
+  width:min(1100px, 100%);
+  border:1px solid var(--line);
+  display:grid; grid-template-columns: 1.05fr .95fr;
+  background: #f7f4ec;
+  box-shadow: 0 24px 60px rgba(23,25,22,.08);
+}
+.dossier-copy { padding: clamp(1.5rem, 4vw, 3rem); border-right:1px solid var(--line); }
+.dossier-visual {
+  min-height: 520px;
+  background:
+    linear-gradient(180deg, rgba(23,25,22,.05), rgba(23,25,22,.45)),
+    url("../assets/images/work-1.jpg") center/cover no-repeat;
+  position:relative;
+}
+.dossier-meta {
+  position:absolute; left:1rem; right:1rem; bottom:1rem;
+  display:flex; justify-content:space-between; gap:1rem; color:#f7f4ec; font-size:.8rem; letter-spacing:.04em; text-transform:uppercase;
+}
+.stamp {
+  display:inline-block; border:2px solid var(--accent); color:var(--khaki);
+  padding:.25rem .55rem; font-family:var(--font-display); font-weight:700; letter-spacing:.06em; text-transform:uppercase; font-size:.75rem;
+}
+.hero .brand-hero { font-family:var(--font-display); font-size:clamp(2.2rem, 4.5vw, 3.6rem); font-weight:700; line-height:1; margin:.8rem 0; }
+.hero h1 { font-size:1.25rem; font-weight:500; max-width:30ch; margin:0 0 1rem; }
+@media (max-width:900px){ .dossier{grid-template-columns:1fr;} .dossier-copy{border-right:0; border-bottom:1px solid var(--line);} }
+
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="../preview/index.html">
+    <span class="brand-name">Илай Саматов</span>
+    <span class="brand-role">Кузнец-Дизайнер</span>
+  </a>
+  <nav class="nav" aria-label="Основное меню">
+    <a href="../balkony/">Балконы</a>
+    <a href="../zabory/">Заборы</a>
+    <a href="../lestnicy/">Лестницы</a>
+    <a href="../mebel/">Мебель</a>
+    <a href="../3d-primerka/">3D-примерка</a>
+    <a class="nav-cta" href="../kontakty/">Связаться</a>
+  </nav>
+</header>
+
+
+<section class="hero hero-dossier">
+  <div class="dossier">
+    <div class="dossier-copy">
+      <span class="stamp">Case open</span>
+      <p class="brand-hero">Илай — Кузнец-Дизайнер</p>
+      <p class="muted">Готовые решения от проекта до результата</p>
+      <h1>Сначала встреча и ясность — потом металл на века</h1>
+      <p>Помогаю владельцам домов и дизайнерам воплотить желание в металле: технически верно, стилистически точно, с предсказуемым результатом. Сайт — доказательство экспертизы. Главная цель — разбор вашей задачи со мной.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="../kontakty/">Обсудить задачу</a>
+        <a class="btn btn-ghost" href="../3d-primerka/">Бесплатная 3D-примерка</a>
+      </div>
+    </div>
+    <div class="dossier-visual">
+      <div class="dossier-meta"><span>Ручейная 2А</span><span>11+ лет</span><span>Гарантия 10 лет</span></div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section services" id="services">
+  <div class="wrap">
+    <p class="eyebrow">Направления</p>
+    <h2>Заборы, балконы, лестницы, мебель</h2>
+    <p class="lead">Сезонный пик — ограждения. Мебель и интерьер держат мастерскую занятой круглый год.</p>
+    <div class="service-grid">
+      <a class="service" href="../balkony/">
+        <h3>Балконы</h3>
+        <p>Сварные и кованые ограждения. 3D-примерка до производства.</p>
+        <span>от 30 000 ₽/м²</span>
+      </a>
+      <a class="service" href="../zabory/">
+        <h3>Заборы</h3>
+        <p>Надёжная ограда как часть архитектуры участка — под ключ.</p>
+        <span>Разбор задачи</span>
+      </a>
+      <a class="service" href="../lestnicy/">
+        <h3>Лестницы и перила</h3>
+        <p>Авторские ограждения, которые становятся акцентом дома.</p>
+        <span>Разбор задачи</span>
+      </a>
+      <a class="service" href="../mebel/">
+        <h3>Мебель и интерьер</h3>
+        <p>Внесезонные изделия: столы, бра, МАФ, металл в интерьере.</p>
+        <span>Разбор задачи</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section proof" id="proof">
+  <div class="wrap">
+    <p class="eyebrow">Экспертиза</p>
+    <h2>Сайт как доказательство: почему это не «кустарщина»</h2>
+    <div class="proof-grid">
+      <article>
+        <h3>11+ лет в металле</h3>
+        <p>Кузнец, сварщик, сборщик, слесарь и рихтовщик в одном лице. Каждый проект веду лично — с командой на производстве.</p>
+      </article>
+      <article>
+        <h3>Технолог сварочного производства</h3>
+        <p>Холодная и горячая ковка, сварка, слесарная доводка. Желание клиента упаковываю в правильную технику и стиль.</p>
+      </article>
+      <article>
+        <h3>Школа гильдии</h3>
+        <p>Обучение у Эдуарда Оганисяна — президента Гильдии кузнецов и художников Калининграда, члена Гильдии кузнецов России.</p>
+      </article>
+      <article>
+        <h3>Гарантия до 10 лет</h3>
+        <p>Договор самозанятого. Оплата 60% / 30% / 10% — прозрачные этапы без кассовых сюрпризов для обеих сторон.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section meeting" id="meeting">
+  <div class="wrap meeting-box">
+    <div>
+      <p class="eyebrow">Главный продукт сайта</p>
+      <h2>Не «купить сразу» — а встреча, где станет ясно</h2>
+      <p class="lead">Частая боль: хочется качественно, а бюджет напрягает. На разборе честно скажу, что возможно в ваших рамках, где упростить без потери вида, и стоит ли вообще запускать производство.</p>
+      <ul class="checklist">
+        <li>Разберём задачу, референсы и ограничения</li>
+        <li>Покажем путь: эскиз → смета → изготовление → монтаж</li>
+        <li>Для простых ограждений — бесплатная 3D-примерка</li>
+        <li>Сложная ковка: сначала концепт и техническое решение</li>
+      </ul>
+    </div>
+    <aside class="meeting-card">
+      <h3>Форматы связи</h3>
+      <a class="btn btn-primary" href="tel:+79520589278">Позвонить</a>
+      <a class="btn btn-ghost" href="https://t.me/Cenzyk" rel="noopener">Telegram</a>
+      <a class="btn btn-ghost" href="../3d-primerka/">Заявка на 3D</a>
+      <p class="tiny">Калининград и область · под ключ</p>
+    </aside>
+  </div>
+</section>
+
+<section class="section process" id="process">
+  <div class="wrap">
+    <p class="eyebrow">Процесс</p>
+    <h2>От желания до монтажа</h2>
+    <ol class="steps">
+      <li><strong>Разбор</strong><span>Идея, фото, размеры, стиль, бюджетный ориентир</span></li>
+      <li><strong>Эскиз / 3D</strong><span>Видите результат до оплаты производства</span></li>
+      <li><strong>Смета и договор</strong><span>Прозрачные цифры, гарантия до 10 лет</span></li>
+      <li><strong>Изготовление</strong><span>60% старт · 30% до покраски · 10% после монтажа</span></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section cta-final">
+  <div class="wrap cta-final-inner">
+    <h2>Есть задача по металлу?</h2>
+    <p>Напишите или позвоните — обсудим, как сделать правильно и на века.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="../kontakty/">Обсудить задачу</a>
+      <a class="btn btn-ghost" href="../3d-primerka/">3D-примерка для Директа</a>
+    </div>
+  </div>
+</section>
+
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="brand-name">Илай Саматов</p>
+      <p class="muted">Кузнец-Дизайнер · металл под ключ</p>
+      <p class="muted">Готовые решения от проекта до результата</p>
+    </div>
+    <div>
+      <p><a href="tel:+79520589278">+7 952 058-92-78</a></p>
+      <p><a href="mailto:ilja.samatov@yandex.ru">ilja.samatov@yandex.ru</a></p>
+      <p class="muted">Калининград и область</p>
+    </div>
+    <div>
+      <p><a href="https://t.me/Cenzyk" rel="noopener">Telegram</a></p>
+      <p><a href="https://t.me/CenzykT_G" rel="noopener">Канал с работами</a></p>
+      <p><a href="../privacy/">Политика ПДн</a></p>
+    </div>
+  </div>
+  <p class="copy">© Саматов И. В., 2026</p>
+</footer>
+
+<div class="variant-badge">V5 · Metal Dossier<a href="./index.html">все варианты</a></div>
+<script src="../assets/js/site-motion.js" defer></script>
+</body>
+</html>
