@@ -162,29 +162,55 @@ for r in (15, 16):
     ws[f"D{r}"].border = thin
     ws[f"D{r}"].font = font_note
 
-ws["B18"] = "Тип изделия (список для шапки)"
+# Бренд и контакты для листа «Предложение» (как в PDF-референсе)
+ws["B18"] = "БРЕНД И КОНТАКТЫ ДЛЯ КП"
 ws["B18"].font = font_bold
-for i, t in enumerate(PRODUCT_TYPES, start=19):
+ws.merge_cells("B18:D18")
+brand_params = [
+    (19, "Имя в шапке КП", "Кузнец Илай Саматов"),
+    (20, "Подзаголовок", "мастер художественной ковки"),
+    (21, "ФИО полностью", "Самозанятый Саматов Илай Валерьевич"),
+    (22, "Телефон", "+7 (952) 058-92-78"),
+    (23, "Сайт", "Cenzyk.art"),
+    (24, "Email", "ilja.samatov@yandex.ru"),
+    (25, "Адрес", "г. Калининград, ул. Ручейная, 2а"),
+    (26, "График Пн–Пт", "9:00-17:00"),
+    (27, "График Сб", "10:00-14:00"),
+    (28, "График Вс", "выходной"),
+    (29, "Стаж", "11 лет"),
+    (30, "Профиль (текст)", "Мебель, лестничные и балконные ограждения, элементы декора."),
+    (31, "Срок действия КП, дней", 10),
+]
+for r, name, val in brand_params:
+    ws[f"B{r}"] = name
+    ws[f"B{r}"].fill = fill_soft
+    ws[f"B{r}"].border = thin
+    input_cell(ws[f"C{r}"], val)
+    ws[f"C{r}"].font = font_bold
+    ws.merge_cells(f"C{r}:D{r}")
+
+ws["B33"] = "Тип изделия (список для шапки)"
+ws["B33"].font = font_bold
+for i, t in enumerate(PRODUCT_TYPES, start=34):
     ws[f"B{i}"] = t
     ws[f"B{i}"].fill = fill_soft
     ws[f"B{i}"].border = thin
 
-ws["B28"] = "Правило маржи"
-ws["B28"].font = font_bold
-ws["B29"] = (
+ws["B43"] = "Правило маржи"
+ws["B43"].font = font_bold
+ws["B44"] = (
     "Себестоимость C = реальные выплаты (материалы по цене поставщика, труд, транспорт, аренда, расходники, субподряд).\n"
     "Наценка менеджера = % только на тип «закупка» — это часть вашей прибыли, не расход.\n"
     "Цена для целевой маржи P = C / (1 − НПД% − целевая маржа% − агентские%).\n"
     "Прибыль = P − C − P×НПД − P×агентские.  Маржа % = Прибыль / P.\n"
-    "Не добавляйте «+15% на закупки» и «+20% маржа» как две наценки на одну базу: 15% уже внутри итоговой прибыли.\n"
-    "\n"
-    "КАССА ЗАКАЗА — отдельный опциональный учёт денег после сделки. На рентабельность и цену КП НЕ влияет."
+    "В листе «Предложение» варианты СЗ 4%/6% считаются как Итого×1.04 / Итого×1.06 — как в вашем PDF.\n"
+    "КАССА — опциональный учёт денег после сделки, на цену КП не влияет."
 )
-ws["B29"].alignment = Alignment(wrap_text=True, vertical="top")
-ws.merge_cells("B29:F35")
-ws["B29"].fill = fill_soft
-ws.row_dimensions[29].height = 110
-set_col_widths(ws, {"A": 3, "B": 48, "C": 14, "D": 70, "E": 12, "F": 12})
+ws["B44"].alignment = Alignment(wrap_text=True, vertical="top")
+ws.merge_cells("B44:F50")
+ws["B44"].fill = fill_soft
+ws.row_dimensions[44].height = 110
+set_col_widths(ws, {"A": 3, "B": 48, "C": 42, "D": 28, "E": 12, "F": 12})
 
 # =============================================================================
 # Сводка
@@ -215,7 +241,7 @@ ws["C8"] = "Ворота"
 ws["C9"] = "=TODAY()"
 ws["C9"].number_format = "DD.MM.YYYY"
 # Тип: список из Параметры B19:B26
-dv = DataValidation(type="list", formula1="Параметры!$B$19:$B$26", allow_blank=True)
+dv = DataValidation(type="list", formula1="Параметры!$B$34:$B$41", allow_blank=True)
 ws.add_data_validation(dv)
 dv.add(ws["C8"])
 
@@ -803,229 +829,297 @@ ws.freeze_panes = "B16"
 ws.auto_filter.ref = f"B15:L{last_data_row + 20}"
 
 # =============================================================================
-# Предложение для заказчика (клиентский лист → PDF)
+# Предложение для заказчика — по PDF-референсу Cenzyk.art
 # =============================================================================
 ws = wb.create_sheet("Предложение", 3)
 
-# Служебная пометка вне области печати
+fill_brand = PatternFill("solid", fgColor="6B9080")
+fill_red_tot = PatternFill("solid", fgColor="C94C4C")
+fill_green_tot = PatternFill("solid", fgColor="B7D7A8")
+fill_yellow_tot = PatternFill("solid", fgColor="F6E59A")
+fill_tax = PatternFill("solid", fgColor="D9E8F5")
+font_white_bold = Font(name="Calibri", bold=True, color="FFFFFF", size=11)
+font_brand = Font(name="Georgia", bold=True, size=18, color="1A1A1A")
+font_brand_sub = Font(name="Georgia", size=11, color="1A1A1A")
+
+# Служебная строка (вне печати)
 ws["B1"] = (
-    "ДЛЯ ВАС: после заполнения — Файл → Экспорт → в PDF (только этот лист). "
-    "Так удобнее, чем скриншот. Жёлтое — текст для клиента. Фото: Вставка → Изображение."
+    "ДЛЯ ВАС: заполните смету и вставьте фото → Файл → Экспорт в PDF (этот лист). "
+    "Ориентир цены со Сводки справа. Шаблон как ваш PDF Андрей_Светлана_Краснознаменск."
 )
 ws["B1"].font = font_note
-ws.merge_cells("B1:G1")
+ws.merge_cells("B1:F1")
+ws["G1"] = "Ориентир из Сводки (цена КП):"
+ws["G1"].font = font_note
+calc_cell(ws["H1"], "=Сводка!D24", money, bold=True)
 
-ws["B3"] = "КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ"
-ws["B3"].font = Font(name="Calibri", bold=True, size=20, color="2F3E46")
-ws.merge_cells("B3:G3")
+# ---- ШАПКА БРЕНДА (как в PDF) ----
+for col in ["B", "C", "D", "E", "F"]:
+    ws[f"{col}3"].fill = fill_brand
+    ws[f"{col}4"].fill = fill_brand
+    ws[f"{col}5"].fill = fill_brand
+ws.merge_cells("B3:C5")
+ws["B3"] = '=Параметры!C19&CHAR(10)&Параметры!C20'
+ws["B3"].font = font_brand
+ws["B3"].alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
+ws["B3"].fill = fill_brand
 
-ws["B4"] = "Изготовление металлоконструкций: ворота, заборы, лестницы, мебель, интерьер / экстерьер"
-ws["B4"].font = font_note
-ws.merge_cells("B4:G4")
+ws["D3"] = "Предложение №:"
+ws["D3"].fill = fill_brand
+ws["D3"].font = font_brand_sub
+ws["E3"] = '=IF(Сводка!C11="","—",Сводка!C11)'
+ws["E3"].fill = fill_input
+ws["E3"].font = font_bold
+ws["E3"].border = thin
+ws.merge_cells("E3:F3")
 
-# Шапка из Сводки
-header_cell(ws["B6"], "ДАННЫЕ ЗАКАЗА", fill_section, font_section)
-ws.merge_cells("B6:C6")
-header_pairs = [
-    (7, "Дата", "=Сводка!C9", "DD.MM.YYYY"),
-    (8, "Клиент", "=Сводка!C10", None),
-    (9, "№ клиента", "=Сводка!C11", None),
-    (10, "Объект", "=Сводка!C6", None),
-    (11, "Изделие / конструкция", "=Сводка!C7", None),
-    (12, "Тип", "=Сводка!C8", None),
-]
-for r, lab, formula, fmt in header_pairs:
-    ws[f"B{r}"] = lab
-    ws[f"B{r}"].fill = fill_soft
-    ws[f"B{r}"].border = thin
-    calc_cell(ws[f"C{r}"], formula, fmt)
-    ws.merge_cells(f"C{r}:D{r}")
+ws["D4"] = "Дата:"
+ws["D4"].fill = fill_brand
+ws["D4"].font = font_brand_sub
+ws["E4"] = "=Сводка!C9"
+ws["E4"].number_format = '[$-419]D MMMM YYYY;@'
+ws["E4"].fill = fill_calc
+ws["E4"].border = thin
+ws.merge_cells("E4:F4")
 
-# Описание
-header_cell(ws["B14"], "ОПИСАНИЕ РАБОТ ДЛЯ ЗАКАЗЧИКА", fill_section, font_section)
-ws.merge_cells("B14:G14")
-ws["B15"] = (
-    "Кратко опишите, что входит в работу: размеры, материал, цвет покраски, "
-    "монтаж да/нет, сроки. Этот текст увидит клиент."
-)
-ws["B15"].fill = fill_input
-ws["B15"].font = font_label
-ws["B15"].alignment = Alignment(wrap_text=True, vertical="top")
-ws["B15"].border = thin
-ws.merge_cells("B15:G18")
-for rr in range(15, 19):
-    ws.row_dimensions[rr].height = 18
-ws.row_dimensions[15].height = 36
+ws["D5"] = "Актуально до:"
+ws["D5"].fill = fill_brand
+ws["D5"].font = font_brand_sub
+ws["E5"] = "=E4+Параметры!C31"
+ws["E5"].number_format = "DD.MM.YYYY"
+ws["E5"].fill = fill_calc
+ws["E5"].border = thin
+ws.merge_cells("E5:F5")
+ws.row_dimensions[3].height = 22
+ws.row_dimensions[4].height = 20
+ws.row_dimensions[5].height = 20
 
-# Фото
-header_cell(ws["B20"], "ФОТО / ЭСКИЗЫ", fill_section, font_section)
-ws.merge_cells("B20:G20")
-ws["B21"] = "ФОТО 1\nВставка → Изображение\nили Ctrl+V"
-ws["E21"] = "ФОТО 2\nВставка → Изображение\nили Ctrl+V"
-for addr in ("B21", "E21"):
-    ws[addr].fill = fill_soft
+# Клиент / объект
+ws["B7"] = "Клиент:"
+ws["C7"] = "=Сводка!C10"
+ws["D7"] = "Объект:"
+ws["E7"] = "=Сводка!C6"
+ws["B8"] = "Изделие:"
+ws["C8"] = "=Сводка!C7"
+ws["D8"] = "Тип:"
+ws["E8"] = "=Сводка!C8"
+for r in (7, 8):
+    for col in ["B", "D"]:
+        ws[f"{col}{r}"].font = font_bold
+        ws[f"{col}{r}"].fill = fill_soft
+        ws[f"{col}{r}"].border = thin
+    for col in ["C", "E"]:
+        ws[f"{col}{r}"].fill = fill_calc
+        ws[f"{col}{r}"].border = thin
+ws.merge_cells("E7:F7")
+ws.merge_cells("E8:F8")
+
+# ---- ВИЗУАЛИЗАЦИЯ 1 ----
+ws["B10"] = 'Визуализация изделия «'
+ws["C10"] = "=Сводка!C7"
+ws["D10"] = "»"
+ws["B10"].font = Font(name="Calibri", bold=True, size=14, color="2F3E46")
+ws["C10"].font = Font(name="Calibri", bold=True, size=14, color="2F3E46")
+ws["C10"].fill = fill_input
+ws["C10"].border = thin
+ws.merge_cells("C10:E10")
+
+ws["B11"] = "ФОТО / ВИЗУАЛИЗАЦИЯ 1\nВставка → Изображение  или  Ctrl+V"
+ws["D11"] = "ФОТО / ВИЗУАЛИЗАЦИЯ 2\nВставка → Изображение  или  Ctrl+V"
+for addr in ("B11", "D11"):
+    ws[addr].fill = PatternFill("solid", fgColor="E8E8E8")
     ws[addr].font = font_note
     ws[addr].alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
     ws[addr].border = thin
-ws.merge_cells("B21:D26")
-ws.merge_cells("E21:G26")
-for rr in range(21, 27):
-    ws.row_dimensions[rr].height = 22
+ws.merge_cells("B11:C15")
+ws.merge_cells("D11:F15")
+for rr in range(11, 16):
+    ws.row_dimensions[rr].height = 28
 
-# Раскладка по разделам — рекомендация: ДА, укрупнённо
-header_cell(ws["B28"], "СОСТАВ И СТОИМОСТЬ ПО РАЗДЕЛАМ", fill_section, font_section)
-ws.merge_cells("B28:G28")
-ws["B29"] = (
-    "Раскладка нужна: клиенту проще понять, за что платит. Цифры — доля от цены КП "
-    "(не ваша себестоимость). Если не хотите светить структуру — удалите строки 31–36 "
-    "и оставьте только ИТОГО."
-)
-ws["B29"].font = font_note
-ws.merge_cells("B29:G29")
+# ---- ВИЗУАЛИЗАЦИЯ 2 (опционально) ----
+ws["B17"] = "Визуализация изделия «"
+ws["C17"] = ""  # второе изделие — вручную
+ws["D17"] = "»  (если одно изделие — оставьте пустым)"
+ws["B17"].font = Font(name="Calibri", bold=True, size=14, color="2F3E46")
+ws["C17"].fill = fill_input
+ws["C17"].border = thin
+ws["C17"].font = Font(name="Calibri", bold=True, size=14, color="2F3E46")
+ws.merge_cells("C17:E17")
+ws["D17"].font = font_note
 
-for col, title in [("B", "Раздел"), ("E", "Что входит"), ("G", "Сумма для заказчика")]:
-    header_cell(ws[f"{col}30"], title)
-ws.merge_cells("B30:D30")
-ws.merge_cells("E30:F30")
+ws["B18"] = "ФОТО / ВИЗУАЛИЗАЦИЯ 3\nВставка → Изображение"
+ws["D18"] = "ФОТО / ВИЗУАЛИЗАЦИЯ 4\nВставка → Изображение"
+for addr in ("B18", "D18"):
+    ws[addr].fill = PatternFill("solid", fgColor="E8E8E8")
+    ws[addr].font = font_note
+    ws[addr].alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+    ws[addr].border = thin
+ws.merge_cells("B18:C22")
+ws.merge_cells("D18:F22")
+for rr in range(18, 23):
+    ws.row_dimensions[rr].height = 28
 
-# Укрупнённые разделы: себестоимость через SUMIF по этапам Калькуляции (кол. B),
-# цена клиенту = доля × Цена КП. Вспомогательные формулы в столбце I (скрыт от печати).
-# Этапы в Калькуляции!B: Проектирование, Лекала, Металл, Производство, Предмонтаж,
-# Покраска эмаль, Пескоструй, Порошок, Монтаж, Расходники/день
+# ---- СМЕТА (как в PDF) ----
+ws["B24"] = "Смета работ и материалов"
+ws["B24"].font = Font(name="Calibri", bold=True, size=16, color="2F3E46")
+ws.merge_cells("B24:F24")
 
-sections = [
-    (
-        31,
-        "1. Проектирование и подготовка",
-        "Замер, эскизы, лекала",
-        '=SUMIF(Калькуляция!$B$16:$B$250,"Проектирование",Калькуляция!$H$16:$H$250)'
-        '+SUMIF(Калькуляция!$B$16:$B$250,"Лекала",Калькуляция!$H$16:$H$250)',
-    ),
-    (
-        32,
-        "2. Материалы",
-        "Металл, комплектующие, резка/токарка",
-        '=SUMIF(Калькуляция!$B$16:$B$250,"Металл",Калькуляция!$H$16:$H$250)',
-    ),
-    (
-        33,
-        "3. Изготовление",
-        "Работы в цехе, расходники",
-        '=SUMIF(Калькуляция!$B$16:$B$250,"Производство",Калькуляция!$H$16:$H$250)'
-        '+SUMIF(Калькуляция!$B$16:$B$250,"Расходники/день",Калькуляция!$H$16:$H$250)',
-    ),
-    (
-        34,
-        "4. Окраска и обработка",
-        "Эмаль / порошок / пескоструй",
-        '=SUMIF(Калькуляция!$B$16:$B$250,"Покраска эмаль",Калькуляция!$H$16:$H$250)'
-        '+SUMIF(Калькуляция!$B$16:$B$250,"Пескоструй",Калькуляция!$H$16:$H$250)'
-        '+SUMIF(Калькуляция!$B$16:$B$250,"Порошок",Калькуляция!$H$16:$H$250)',
-    ),
-    (
-        35,
-        "5. Монтаж",
-        "Доставка, установка на объекте",
-        '=SUMIF(Калькуляция!$B$16:$B$250,"Предмонтаж",Калькуляция!$H$16:$H$250)'
-        '+SUMIF(Калькуляция!$B$16:$B$250,"Монтаж",Калькуляция!$H$16:$H$250)',
-    ),
-]
+for col, title in [
+    ("B", "Материал / расход / часть"),
+    ("C", "ед. изм."),
+    ("D", "количество"),
+    ("E", "стоимость за шт"),
+    ("F", "общее"),
+]:
+    header_cell(ws[f"{col}25"], title, fill=fill_header, font=font_header)
 
-# I50 = сумма себестоимостей разделов (для долей), столбец скрыт
-ws["I50"] = "=SUM(I31:I35)"
-for r, title, scope, cost_formula in sections:
-    ws[f"B{r}"] = title
-    ws[f"B{r}"].border = thin
-    ws[f"B{r}"].fill = fill_soft
-    ws.merge_cells(f"B{r}:D{r}")
-    ws[f"E{r}"] = scope
-    ws[f"E{r}"].border = thin
-    ws[f"E{r}"].font = font_note
-    ws.merge_cells(f"E{r}:F{r}")
-    # helper cost
-    ws[f"I{r}"] = cost_formula
-    ws[f"I{r}"].number_format = money
-    # client price share of KP
-    calc_cell(
-        ws[f"G{r}"],
-        f'=IF(OR(Сводка!$D$24=0,$I$50=0),0,I{r}/$I$50*Сводка!$D$24)',
-        money,
-        bold=True,
-    )
-    for col in ["C", "D", "F"]:
+# 22 строки позиций сметы (жёлтый ввод) — как детальная смета в референсе
+smeta_first = 26
+smeta_last = 47
+for r in range(smeta_first, smeta_last + 1):
+    for col in ["B", "C", "D", "E"]:
+        input_cell(ws[f"{col}{r}"])
+    ws[f"D{r}"] = 0
+    ws[f"E{r}"] = 0
+    ws[f"E{r}"].number_format = money
+    calc_cell(ws[f"F{r}"], f"=IF(OR(D{r}=\"\",E{r}=\"\"),0,D{r}*E{r})", money)
+    ws[f"C{r}"] = "шт"
+
+# Красный итог расходов на изготовление
+r_mat = smeta_last + 1  # 48
+ws[f"B{r_mat}"] = "Итого расходы на изготовление (материал, расходники, покраска, доставка)"
+ws[f"B{r_mat}"].font = font_white_bold
+ws[f"B{r_mat}"].fill = fill_red_tot
+ws.merge_cells(f"B{r_mat}:E{r_mat}")
+for col in ["B", "C", "D", "E", "F"]:
+    ws[f"{col}{r_mat}"].fill = fill_red_tot
+    ws[f"{col}{r_mat}"].border = thin
+    ws[f"{col}{r_mat}"].font = font_white_bold
+calc_cell(ws[f"F{r_mat}"], f"=SUM(F{smeta_first}:F{smeta_last})", money, bold=True)
+ws[f"F{r_mat}"].fill = fill_red_tot
+ws[f"F{r_mat}"].font = font_white_bold
+
+# Работы: изготовление + монтаж (пакетные цены для клиента)
+r_work1 = r_mat + 1  # 49
+r_work2 = r_mat + 2  # 50
+ws[f"B{r_work1}"] = "Изготовление конструкции"
+ws[f"C{r_work1}"] = "ед."
+ws[f"D{r_work1}"] = 1
+ws[f"E{r_work1}"] = 0
+ws[f"B{r_work2}"] = "Монтаж"
+ws[f"C{r_work2}"] = "ед."
+ws[f"D{r_work2}"] = 1
+ws[f"E{r_work2}"] = 0
+for r in (r_work1, r_work2):
+    for col in ["B", "C", "D", "E"]:
+        input_cell(ws[f"{col}{r}"])
+    ws[f"E{r}"].number_format = money
+    calc_cell(ws[f"F{r}"], f"=D{r}*E{r}", money)
+
+r_work_tot = r_mat + 3  # 51
+ws[f"B{r_work_tot}"] = "Итого за работу"
+ws.merge_cells(f"B{r_work_tot}:E{r_work_tot}")
+for col in ["B", "C", "D", "E", "F"]:
+    ws[f"{col}{r_work_tot}"].fill = fill_green_tot
+    ws[f"{col}{r_work_tot}"].border = thin
+    ws[f"{col}{r_work_tot}"].font = font_bold
+calc_cell(ws[f"F{r_work_tot}"], f"=F{r_work1}+F{r_work2}", money, bold=True)
+ws[f"F{r_work_tot}"].fill = fill_green_tot
+
+r_grand = r_mat + 4  # 52
+ws[f"B{r_grand}"] = "Итого общая"
+ws.merge_cells(f"B{r_grand}:E{r_grand}")
+for col in ["B", "C", "D", "E", "F"]:
+    ws[f"{col}{r_grand}"].fill = fill_yellow_tot
+    ws[f"{col}{r_grand}"].border = thin
+    ws[f"{col}{r_grand}"].font = font_big
+calc_cell(ws[f"F{r_grand}"], f"=F{r_mat}+F{r_work_tot}", money, bold=True)
+ws[f"F{r_grand}"].fill = fill_yellow_tot
+ws[f"F{r_grand}"].font = font_big
+
+# Варианты СЗ — как в PDF: Итого × 1.04 / 1.06
+r_sz4 = r_mat + 5  # 53
+r_sz6 = r_mat + 6  # 54
+ws[f"B{r_sz4}"] = "Проведение через СЗ 4% физ. лицо"
+ws[f"B{r_sz6}"] = "Проведение через СЗ 6% Юр. лицо"
+for r, mult in ((r_sz4, "1.04"), (r_sz6, "1.06")):
+    ws.merge_cells(f"B{r}:E{r}")
+    for col in ["B", "C", "D", "E", "F"]:
+        ws[f"{col}{r}"].fill = fill_tax
         ws[f"{col}{r}"].border = thin
+        ws[f"{col}{r}"].font = font_bold
+    calc_cell(ws[f"F{r}"], f"=F{r_grand}*{mult}", money, bold=True)
+    ws[f"F{r}"].fill = fill_tax
 
-ws["B36"] = "ИТОГО К ОПЛАТЕ"
-ws["B36"].font = font_big
-ws["B36"].fill = fill_good
-ws["B36"].border = thin
-ws.merge_cells("B36:F36")
-calc_cell(ws["G36"], "=Сводка!D24", money, bold=True)
-ws["G36"].fill = fill_good
-ws["G36"].font = font_big
-
-ws["B37"] = "Контроль суммы разделов (должно = итогу):"
-ws["B37"].font = font_note
-calc_cell(ws["G37"], "=SUM(G31:G35)", money)
-ws["G37"].font = font_note
-
-ws["B38"] = (
-    "Цена конечная для заказчика. Налог самозанятого (НПД) учтён во внутреннем расчёте "
-    "и заложен в итоговую сумму — отдельно клиенту не выставляется."
+ws[f"B{r_sz6 + 1}"] = (
+    "Цены в смете — для заказчика (уже с вашей наценкой). "
+    "Строки «СЗ 4%/6%» = Итого общая × 1.04 / 1.06, как в вашем PDF. "
+    "После заполнения отправьте лист в PDF вместо скриншота."
 )
-ws["B38"].font = font_note
-ws.merge_cells("B38:G38")
+ws[f"B{r_sz6 + 1}"].font = font_note
+ws.merge_cells(f"B{r_sz6 + 1}:F{r_sz6 + 1}")
 
-# Условия
-header_cell(ws["B40"], "УСЛОВИЯ", fill_section, font_section)
-ws.merge_cells("B40:G40")
-ws["B41"] = "Срок изготовления, раб. дней"
-ws["C41"] = 14
-input_cell(ws["C41"])
-ws["D41"] = "Аванс, %"
-ws["E41"] = 0.50
-input_cell(ws["E41"], fmt=pct)
-ws["F41"] = "Аванс, ₽"
-calc_cell(ws["G41"], "=G36*E41", money, bold=True)
-ws["B42"] = "Остаток к оплате, ₽"
-calc_cell(ws["C42"], "=G36-G41", money, bold=True)
-ws["D42"] = "Срок действия КП, дней"
-ws["E42"] = 10
-input_cell(ws["E42"])
-ws["B43"] = "Доп. условия (оплата, гарантия, доставка):"
-ws["B43"].font = font_bold
-ws.merge_cells("B43:G43")
-ws["B44"] = (
-    "Оплата: аванс по запуску, остаток после монтажа / готовности. "
-    "Гарантия на сварные соединения и покраску — по договорённости. "
-    "Изменения проекта после согласования могут изменить стоимость."
-)
-ws["B44"].fill = fill_input
-ws["B44"].alignment = Alignment(wrap_text=True, vertical="top")
-ws["B44"].border = thin
-ws.merge_cells("B44:G46")
+# ---- КОНТАКТЫ (как в PDF) ----
+r_cont = r_sz6 + 3  # 57
+ws[f"B{r_cont}"] = "Контакты"
+ws[f"B{r_cont}"].font = Font(name="Calibri", bold=True, size=16, color="2F3E46")
+ws.merge_cells(f"B{r_cont}:C{r_cont}")
+ws[f"E{r_cont}"] = "С уважением,"
+ws[f"E{r_cont}"].font = font_label
 
-ws["B48"] = "Исполнитель: самозанятый"
-ws["B48"].font = font_label
-ws["B49"] = "Подпись / согласование заказчика: ______________________    Дата: __________"
-ws["B49"].font = font_label
-ws.merge_cells("B49:G49")
+contacts = [
+    (1, '=Параметры!C21'),
+    (2, '="Телефон: "&Параметры!C22'),
+    (3, '="Сайт: "&Параметры!C23'),
+    (4, '="Email: "&Параметры!C24'),
+    (5, '="Адрес: "&Параметры!C25'),
+    (6, "График работы:"),
+    (7, '="Пн-Пт: "&Параметры!C26'),
+    (8, '="Сб: "&Параметры!C27'),
+    (9, '="Вс: "&Параметры!C28'),
+    (10, "Профиль:"),
+    (11, '="Стаж работы: "&Параметры!C29'),
+    (12, "=Параметры!C30"),
+]
+for off, formula in contacts:
+    r = r_cont + off
+    ws[f"B{r}"] = formula
+    ws[f"B{r}"].font = font_label
+    ws.merge_cells(f"B{r}:C{r}")
 
-# Скрыть helper column I from view width; keep for formulas
-ws.column_dimensions["I"].hidden = True
-ws.column_dimensions["H"].hidden = True
+ws[f"E{r_cont + 2}"] = "=Параметры!C19"
+ws[f"E{r_cont + 2}"].font = font_bold
+ws[f"E{r_cont + 3}"] = "=Параметры!C20"
+ws[f"E{r_cont + 3}"].font = font_label
+ws[f"E{r_cont + 5}"] = "Подпись"
+ws[f"E{r_cont + 5}"].font = font_note
+ws[f"E{r_cont + 5}"].fill = fill_soft
+ws[f"E{r_cont + 5}"].border = thin
+ws.merge_cells(f"E{r_cont + 5}:F{r_cont + 8}")
+ws[f"E{r_cont + 5}"].alignment = Alignment(horizontal="center", vertical="bottom")
 
-set_col_widths(ws, {"A": 3, "B": 28, "C": 14, "D": 14, "E": 16, "F": 14, "G": 20})
-ws.print_area = "B3:G49"
+r_valid = r_cont + 14
+ws[f"B{r_valid}"] = '="Действительно до: "&TEXT(E5,"DD.MM.YYYY")'
+ws[f"B{r_valid}"].font = font_bold
+ws.merge_cells(f"B{r_valid}:C{r_valid}")
+
+# Подсветка шапки контактов
+for col in ["B", "C", "D", "E", "F"]:
+    ws[f"{col}{r_cont}"].fill = fill_soft
+
+set_col_widths(ws, {"A": 3, "B": 54, "C": 12, "D": 12, "E": 16, "F": 16, "G": 18, "H": 14})
+ws.print_area = f"B3:F{r_valid}"
 ws.page_setup.orientation = "portrait"
 ws.page_setup.fitToPage = True
 ws.page_setup.fitToWidth = 1
-ws.page_setup.fitToHeight = 1
-ws.page_margins.left = 0.5
-ws.page_margins.right = 0.5
-ws.page_margins.top = 0.5
-ws.page_margins.bottom = 0.5
-ws.print_title_rows = None
+ws.page_setup.fitToHeight = 0
+ws.page_margins.left = 0.4
+ws.page_margins.right = 0.4
+ws.page_margins.top = 0.4
+ws.page_margins.bottom = 0.4
+ws.sheet_view.showGridLines = False
+
+print(f"Proposal smeta rows {smeta_first}-{smeta_last}, totals mat={r_mat} work={r_work_tot} grand={r_grand}")
 
 # =============================================================================
 # Касса — упрощённая, явно опциональная
@@ -1104,11 +1198,11 @@ steps = [
     "2. «Металл» — кол-во штанг проката (шт = 6 м), плюс плазма/ковка/токарка/комплектующие. На все эти блоки — наценка менеджера.",
     "3. «Калькуляция» — количества по этапам (дни, рейсы, материалы).",
     "4. «Сводка» — смотрите рекомендуемую цену, впишите цену КП в жёлтую ячейку, проверьте статус.",
-    "5. «Предложение» — текст и фото для клиента; суммы разделов и итог подтянутся сами. Затем Экспорт в PDF.",
+    "5. «Предложение» — по вашему PDF: шапка бренда, визуализации, смета строк, итоги красный/зелёный/жёлтый, СЗ 4%/6%, контакты.",
     "",
     "ВМЕСТО СКРИНШОТА:",
-    "• Откройте лист «Предложение» → Файл → Экспорт в PDF (или Печать → PDF).",
-    "• Отправьте PDF в WhatsApp / Telegram / почту — выглядит аккуратнее скриншота.",
+    "• Лист «Предложение» → заполните позиции сметы и вставьте фото → Файл → Экспорт в PDF.",
+    "• Отправьте PDF клиенту (WhatsApp / почта). Бренд и контакты правятся на листе Параметры.",
     "",
     "КАССА — НЕ ДЛЯ РАСЧЁТА ЦЕНЫ:",
     "• Нужна после сделки: авансы клиента и факт выплат (металл, ЗП, транспорт).",
