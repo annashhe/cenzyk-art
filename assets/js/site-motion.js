@@ -1,27 +1,25 @@
 (function () {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  document.documentElement.classList.add('motion-on');
-
-  var hero = document.querySelector('.hero, .dossier');
+  // Brutal / staccato: hard steps, not soft luxury fades
+  var hero = document.querySelector('.hero, .dossier, .chooser-box');
   if (hero) {
     hero.style.opacity = '0';
-    hero.style.transform = 'translateY(12px)';
+    hero.style.transform = 'translateY(18px)';
     requestAnimationFrame(function () {
-      hero.style.transition = 'opacity .7s ease, transform .7s ease';
+      hero.style.transition = 'opacity .35s steps(3, end), transform .35s steps(3, end)';
       hero.style.opacity = '1';
       hero.style.transform = 'none';
     });
   }
 
-  var revealEls = document.querySelectorAll('.service, .proof article, .steps li, .meeting-card');
+  var revealEls = document.querySelectorAll('.service, .proof article, .steps li, .meeting-card, .price-card');
   if (!('IntersectionObserver' in window) || !revealEls.length) return;
 
-  revealEls.forEach(function (el, i) {
+  revealEls.forEach(function (el) {
     el.style.opacity = '0';
-    el.style.transform = 'translateY(16px)';
-    el.style.transition = 'opacity .55s ease, transform .55s ease';
-    el.style.transitionDelay = (i % 4) * 60 + 'ms';
+    el.style.transform = 'translateY(10px)';
+    el.style.transition = 'opacity .28s steps(2, end), transform .28s steps(2, end)';
   });
 
   var io = new IntersectionObserver(
@@ -33,7 +31,7 @@
         io.unobserve(entry.target);
       });
     },
-    { threshold: 0.16 }
+    { threshold: 0.12 }
   );
 
   revealEls.forEach(function (el) {
