@@ -9,6 +9,9 @@
   --accent-2: #f3c84a;
   --accent-deep: #c99700;
   --accent-ink: #141613;
+  --curve: #c9a84e;
+  --curve-pale: #d8c48a;
+  --curve-ghost: #e2d3a8;
   --line: rgba(20, 22, 19, 0.22);
   --line-strong: rgba(20, 22, 19, 0.55);
   --font-display: "Archivo Black", sans-serif;
@@ -230,27 +233,34 @@ img {
 
 .curve-stroke {
   fill: none;
-  stroke: var(--accent);
-  stroke-width: 1.25;
+  stroke: var(--curve-pale);
+  stroke-width: 10;
   stroke-linecap: round;
-  opacity: 0.85;
+  stroke-linejoin: round;
+  opacity: 0.42;
 }
 
 .curve-stroke.thick {
-  stroke-width: 2.25;
-  stroke: var(--accent-2);
-  opacity: 0.9;
+  stroke-width: 16;
+  stroke: var(--curve);
+  opacity: 0.34;
 }
 
 .curve-stroke.soft {
-  stroke: var(--accent-deep);
-  stroke-width: 1;
-  opacity: 0.45;
+  stroke: var(--curve-ghost);
+  stroke-width: 12;
+  opacity: 0.28;
+}
+
+.curve-stroke.volute {
+  stroke-width: 14;
+  stroke: var(--curve-pale);
+  opacity: 0.38;
 }
 
 .curve-fill {
-  fill: var(--accent);
-  opacity: 0.12;
+  fill: var(--curve-ghost);
+  opacity: 0.16;
 }
 
 /* —— Homepage hero (V1 layout) —— */
@@ -332,55 +342,39 @@ img {
 }
 
 .hero-visual .curve-stroke {
-  stroke: var(--accent);
-  opacity: 0.95;
-  stroke-width: 1.6;
+  stroke: var(--curve-pale);
+  opacity: 0.48;
+  stroke-width: 12;
 }
 
-.hero-visual .curve-stroke.thick {
-  stroke: var(--accent-2);
-  stroke-width: 2.4;
-  opacity: 0.92;
+.hero-visual .curve-stroke.thick,
+.hero-visual .curve-stroke.volute {
+  stroke: var(--curve);
+  stroke-width: 18;
+  opacity: 0.36;
+}
+
+.hero-visual .curve-stroke.soft {
+  stroke: var(--curve-ghost);
+  stroke-width: 14;
+  opacity: 0.3;
 }
 
 .hero-visual .curve-fill {
-  fill: var(--accent);
+  fill: var(--curve-ghost);
+  opacity: 0.18;
+}
+
+.cta-final .curve-stroke,
+.meeting-card .curve-stroke {
+  stroke: var(--curve-pale);
+  opacity: 0.28;
+  stroke-width: 14;
+}
+
+.cta-final .curve-stroke.thick {
+  stroke-width: 20;
   opacity: 0.22;
-}
-
-.hero-visual .arch-accent {
-  position: absolute;
-  width: 36%;
-  aspect-ratio: 1.05 / 1;
-  top: 12%;
-  right: 10%;
-  border: 1.5px solid transparent;
-  border-top-color: var(--accent-2);
-  border-left-color: var(--accent);
-  border-right-color: var(--accent-deep);
-  border-bottom: 0;
-  border-radius: 999px 999px 0 0;
-  background: linear-gradient(180deg, rgba(243, 200, 74, 0.28), rgba(243, 200, 74, 0));
-  opacity: 0.95;
-  z-index: 3;
-  pointer-events: none;
-}
-
-.hero-visual .arch-accent.small {
-  width: 20%;
-  top: 34%;
-  right: 36%;
-  background: linear-gradient(180deg, rgba(232, 184, 0, 0.35), rgba(232, 184, 0, 0));
-  border-top-color: var(--accent);
-  opacity: 0.9;
-}
-
-.hero-visual .arch-accent.tiny {
-  width: 12%;
-  top: 52%;
-  right: 22%;
-  background: linear-gradient(180deg, rgba(201, 151, 0, 0.3), transparent);
-  border-top-color: var(--accent-deep);
 }
 
 @media (max-width: 900px) {

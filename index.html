@@ -52,9 +52,13 @@
   <main>
     <section class="hero">
       <div class="curve-layer curve-draw" aria-hidden="true">
-        <svg viewBox="0 0 1200 800" preserveAspectRatio="none">
-          <path class="curve-stroke soft" d="M-20,620 C180,520 260,760 480,640 S820,480 980,560 1220,700 1220,700" pathLength="1" />
-          <path class="curve-stroke" d="M40,180 C220,40 420,260 620,120 S980,40 1180,160" pathLength="1" />
+        <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+          <!-- S-scroll into volute (left field) -->
+          <path class="curve-stroke volute" pathLength="1" d="M-40,720 C80,680 140,600 120,520 C90,400 180,340 280,380 C360,412 390,500 330,560 C280,608 210,590 200,530 C192,485 230,460 268,478 C300,494 310,530 285,555" />
+          <!-- Upper C-scroll volute -->
+          <path class="curve-stroke soft" pathLength="1" d="M60,210 C140,80 280,40 420,90 C540,132 580,240 500,320 C440,372 350,360 320,290 C298,240 340,200 390,220 C430,236 445,280 415,310" />
+          <!-- Trailing ribbon into small eye -->
+          <path class="curve-stroke thick" pathLength="1" d="M520,650 C640,560 760,700 900,600 C1000,530 1080,560 1120,620 C1160,680 1120,740 1060,720 C1015,704 1005,655 1045,635" />
         </svg>
       </div>
       <div class="hero-rail" aria-hidden="true">SAMATOV · METAL · KGD</div>
@@ -71,21 +75,23 @@
       <div class="hero-visual" role="img" aria-label="Работа в кузнице">
         <div class="curve-layer curve-draw" aria-hidden="true">
           <svg viewBox="0 0 600 900" preserveAspectRatio="xMidYMid slice">
-            <path class="curve-stroke thick" d="M80,820 C120,620 90,480 210,360 S420,220 460,80" pathLength="1" />
-            <path class="curve-stroke" d="M520,860 C480,700 540,560 400,430 S220,300 180,140" pathLength="1" />
-            <path class="curve-fill" d="M140,780 Q200,640 170,520 Q140,400 250,300 Q360,200 340,90 L360,90 Q380,210 270,320 Q150,430 190,540 Q230,660 160,800 Z" />
+            <!-- Large forged volute from bottom-left -->
+            <path class="curve-stroke volute" pathLength="1" d="M40,860 C70,700 40,560 120,430 C200,300 320,280 390,360 C450,424 430,530 340,560 C270,582 220,530 240,460 C255,410 310,395 350,430 C385,460 375,515 330,535" />
+            <!-- Mirror S-volute top-right -->
+            <path class="curve-stroke thick" pathLength="1" d="M560,120 C520,220 560,320 470,400 C380,480 300,450 280,360 C265,295 320,260 375,290 C420,314 430,370 390,405" />
+            <!-- Small terminal curl -->
+            <path class="curve-stroke soft" pathLength="1" d="M480,720 C520,640 480,560 420,540 C360,520 330,580 370,620 C400,650 450,640 460,600 C468,570 445,555 420,565" />
+            <path class="curve-fill" d="M120,820 C150,700 110,600 170,500 C230,400 310,390 350,450 C385,500 360,560 300,575 C250,588 220,540 240,490 C255,455 295,450 320,475 L310,485 C290,465 260,470 250,500 C235,545 270,575 310,560 C360,542 380,480 340,440 C285,380 200,400 155,510 C120,600 150,700 125,820 Z" />
           </svg>
         </div>
-        <span class="arch-accent" aria-hidden="true"></span>
-        <span class="arch-accent small" aria-hidden="true"></span>
-        <span class="arch-accent tiny" aria-hidden="true"></span>
       </div>
     </section>
 
     <section class="section services" id="services">
       <div class="curve-layer" aria-hidden="true">
-        <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
-          <path class="curve-stroke soft" d="M-10,300 C200,180 340,360 560,240 S900,120 1210,220" />
+        <svg viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice">
+          <path class="curve-stroke volute" d="M-30,300 C120,220 180,120 280,140 C390,162 410,280 320,330 C250,368 180,330 190,250 C197,195 260,175 310,210 C350,236 355,290 315,320" />
+          <path class="curve-stroke soft" d="M720,80 C860,40 980,120 1040,200 C1090,265 1050,340 970,350 C900,358 860,300 890,250 C912,214 960,210 990,245" />
         </svg>
       </div>
       <div class="wrap">
@@ -161,8 +167,8 @@
         </div>
         <aside class="meeting-card">
           <div class="curve-layer" aria-hidden="true">
-            <svg viewBox="0 0 400 500" preserveAspectRatio="none">
-              <path class="curve-stroke" d="M40,460 C90,320 60,220 180,140 S340,60 380,20" style="stroke:#f3c84a" />
+            <svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice">
+              <path class="curve-stroke volute" d="M30,470 C60,360 30,270 110,200 C180,140 250,160 270,230 C288,285 240,325 185,310 C145,300 130,250 165,225 C190,208 225,220 235,250" />
             </svg>
           </div>
           <p class="stamp">MEETING</p>
@@ -190,8 +196,9 @@
 
     <section class="section cta-final">
       <div class="curve-layer" aria-hidden="true">
-        <svg viewBox="0 0 1200 360" preserveAspectRatio="none">
-          <path class="curve-stroke thick" d="M-20,280 C220,80 420,300 680,140 S980,40 1220,180" style="stroke:#f3c84a" />
+        <svg viewBox="0 0 1200 360" preserveAspectRatio="xMidYMid slice">
+          <path class="curve-stroke thick" d="M-40,300 C120,180 200,60 340,90 C490,122 520,250 400,300 C310,338 230,290 250,200 C262,145 330,120 390,155 C440,184 450,250 400,285" />
+          <path class="curve-stroke soft" d="M680,60 C820,20 960,90 1040,170 C1105,230 1070,310 980,320 C905,328 860,265 895,210 C920,172 975,170 1005,210" />
         </svg>
       </div>
       <div class="wrap" style="position:relative;z-index:2">
