@@ -34,6 +34,53 @@ pct = "0.0%"
 align_c = Alignment(horizontal="center", vertical="center", wrap_text=True)
 align_l = Alignment(horizontal="left", vertical="center", wrap_text=True)
 
+# Каталог проката: цена за 1 шт = штанга 6 м (цена позиции поставщика)
+# (группа, сечение, вес_6м_кг, цена_шт)
+PROKAT = [
+    ("Квадрат", "10х10", 5.1, 428.30),
+    ("Квадрат", "12х12", 7.1, 596.26),
+    ("Квадрат", "14х14", 9.5, 797.81),
+    ("Квадрат", "16х16", 12.6, 1058.15),
+    ("Труба квадрат.", "15х15х1.5", 4.0, 383.80),
+    ("Труба квадрат.", "20х20х1.5", 6.0, 575.70),
+    ("Труба квадрат.", "20х20х2.0", 7.0, 586.53),
+    ("Труба квадрат.", "30х30х2.0", 11.0, 921.69),
+    ("Труба квадрат.", "40х40х1.5", 12.0, 1151.40),
+    ("Труба квадрат.", "40х40х2.0", 15.0, 1256.85),
+    ("Труба прямоуг.", "40х20х1.5", 9.0, 863.55),
+    ("Труба прямоуг.", "40х20х2.0", 11.0, 921.69),
+    ("Труба прямоуг.", "50х25х1.5", 12.0, 1151.40),
+    ("Труба прямоуг.", "50х25х2.0", 14.0, 1173.06),
+    ("Полоса", "20х4 мм", 4.1, 397.04),
+    ("Полоса", "25х4 мм", 5.1, 493.88),
+    ("Полоса", "30х4 мм", 6.1, 557.85),
+    ("Полоса", "40х4 мм", 8.0, 731.60),
+    ("Полоса", "50х4 мм", 10.0, 914.50),
+    ("Полоса", "100х10 мм", 49.0, 4687.83),
+    ("Труба в/г", "15х2.8", 8.0, 641.52),
+    ("Труба в/г", "20х2.8", 11.0, 882.09),
+    ("Труба в/г", "25х3.2", 16.0, 1268.80),
+    ("Труба в/г", "32х3.2", 20.0, 1586.00),
+    ("Труба в/г", "40х3.5", 25.0, 1982.50),
+    ("Прокат круглый", "Ø6", 1.6, 156.24),
+    ("Прокат круглый", "Ø8", 2.8, 270.87),
+    ("Прокат круглый", "Ø10", 4.0, 387.80),
+    ("Прокат круглый", "Ø12", 6.0, 581.70),
+    ("Прокат круглый", "Ø14", 15.0, 1352.55),
+    ("Прокат круглый", "Ø16", 10.0, 901.70),
+]
+
+PRODUCT_TYPES = [
+    "Ворота",
+    "Забор",
+    "Лестница",
+    "Мебель",
+    "Интерьер",
+    "Экстерьер",
+    "Сувенир",
+    "Прочее",
+]
+
 
 def set_col_widths(ws, widths):
     for col, w in widths.items():
@@ -117,24 +164,26 @@ for r in (15, 16):
 
 ws["B18"] = "Тип изделия (список для шапки)"
 ws["B18"].font = font_bold
-for i, t in enumerate(["Ворота", "Забор", "Лестница", "Мебель", "Интерьер", "Прочее"], start=19):
+for i, t in enumerate(PRODUCT_TYPES, start=19):
     ws[f"B{i}"] = t
     ws[f"B{i}"].fill = fill_soft
     ws[f"B{i}"].border = thin
 
-ws["B26"] = "Правило маржи"
-ws["B26"].font = font_bold
-ws["B27"] = (
+ws["B28"] = "Правило маржи"
+ws["B28"].font = font_bold
+ws["B29"] = (
     "Себестоимость C = реальные выплаты (материалы по цене поставщика, труд, транспорт, аренда, расходники, субподряд).\n"
     "Наценка менеджера = % только на тип «закупка» — это часть вашей прибыли, не расход.\n"
     "Цена для целевой маржи P = C / (1 − НПД% − целевая маржа% − агентские%).\n"
     "Прибыль = P − C − P×НПД − P×агентские.  Маржа % = Прибыль / P.\n"
-    "Не добавляйте «+15% на закупки» и «+20% маржа» как две наценки на одну базу: 15% уже внутри итоговой прибыли."
+    "Не добавляйте «+15% на закупки» и «+20% маржа» как две наценки на одну базу: 15% уже внутри итоговой прибыли.\n"
+    "\n"
+    "КАССА ЗАКАЗА — отдельный опциональный учёт денег после сделки. На рентабельность и цену КП НЕ влияет."
 )
-ws["B27"].alignment = Alignment(wrap_text=True, vertical="top")
-ws.merge_cells("B27:F32")
-ws["B27"].fill = fill_soft
-ws.row_dimensions[27].height = 96
+ws["B29"].alignment = Alignment(wrap_text=True, vertical="top")
+ws.merge_cells("B29:F35")
+ws["B29"].fill = fill_soft
+ws.row_dimensions[29].height = 110
 set_col_widths(ws, {"A": 3, "B": 48, "C": 14, "D": 70, "E": 12, "F": 12})
 
 # =============================================================================
@@ -155,7 +204,8 @@ for r, lab in [
     (7, "Конструкция / изделие"),
     (8, "Тип"),
     (9, "Дата расчёта"),
-    (10, "Клиент (опц.)"),
+    (10, "Клиент"),
+    (11, "№ клиента"),
 ]:
     ws[f"B{r}"] = lab
     ws[f"B{r}"].fill = fill_soft
@@ -164,7 +214,8 @@ for r, lab in [
 ws["C8"] = "Ворота"
 ws["C9"] = "=TODAY()"
 ws["C9"].number_format = "DD.MM.YYYY"
-dv = DataValidation(type="list", formula1="Параметры!$B$19:$B$24", allow_blank=True)
+# Тип: список из Параметры B19:B26
+dv = DataValidation(type="list", formula1="Параметры!$B$19:$B$26", allow_blank=True)
 ws.add_data_validation(dv)
 dv.add(ws["C8"])
 
@@ -214,8 +265,8 @@ input_cell(ws["D24"], 0, money)
 ws["D24"].font = font_big
 
 rows_price = [
-    (25, "Рекомендуемая цена при целевой марже", "=IF((1-F9-F7-F11)<=0,\"Ошибка %\",D14/(1-F9-F7-F11))", fill_good),
-    (26, "Минимальная цена (при мин. марже)", "=IF((1-F9-F8-F11)<=0,\"Ошибка %\",D14/(1-F9-F8-F11))", fill_warn),
+    (25, "Рекомендуемая цена при целевой марже", '=IF((1-F9-F7-F11)<=0,"Ошибка %",D14/(1-F9-F7-F11))', fill_good),
+    (26, "Минимальная цена (при мин. марже)", '=IF((1-F9-F8-F11)<=0,"Ошибка %",D14/(1-F9-F8-F11))', fill_warn),
     (27, "НПД с цены КП", "=D24*F9", fill_calc),
     (28, "Агентские с цены КП", "=D24*F11", fill_calc),
     (29, "Чистая прибыль при цене КП", "=D24-D14-D27-D28", fill_calc),
@@ -267,7 +318,7 @@ for i, m in enumerate([0.10, 0.15, 0.20, 0.25, 0.30, 0.35]):
         for col in ["C", "D", "E"]:
             ws[f"{col}{r}"].fill = fill_good
 
-ws["B42"] = "Строка 20% — базовый ориентир. Целевую маржу меняйте на листе Параметры — пересчитается рекомендуемая цена."
+ws["B42"] = "Строка 20% — базовый ориентир. Целевую маржу меняйте на листе Параметры."
 ws["B42"].font = font_note
 ws.merge_cells("B42:E42")
 
@@ -285,12 +336,228 @@ for r, lab, formula, fmt in [
     calc_cell(ws[f"D{r}"], formula, fmt)
 
 ws["B49"] = (
-    "Порядок: 1) Металл и Калькуляция → 2) рекомендуемая цена → 3) вписать цену КП в D24 → 4) проверить статус."
+    "Рабочий контур: Металл → Калькуляция → Сводка (цена КП). "
+    "Лист «Касса» — только ПОСЛЕ сделки, для авансов/выплат. На расчёт цены НЕ влияет — можно не трогать."
 )
 ws["B49"].font = font_note
-ws.merge_cells("B49:G49")
+ws.merge_cells("B49:G50")
 set_col_widths(ws, {"A": 3, "B": 44, "C": 22, "D": 16, "E": 22, "F": 14, "G": 12})
 ws.freeze_panes = "B5"
+
+# =============================================================================
+# Металл (сначала — чтобы знать адреса итогов для Калькуляции)
+# =============================================================================
+ws = wb.create_sheet("Металл", 1)
+ws["B2"] = "МЕТАЛЛ И КОМПЛЕКТУЮЩИЕ — каталог"
+ws["B2"].font = font_title
+ws.merge_cells("B2:I2")
+ws["B3"] = (
+    "Цена поставщика = за 1 шт (штанга 6 м). Кол-во — сколько штанг в заказ. "
+    "Вес 6м — справочно. Наценка менеджера: себестоимость × % из Параметров."
+)
+ws["B3"].font = font_note
+ws.merge_cells("B3:I3")
+
+header_cell(ws["B4"], "ПРОКАТ (каталог поставщика)", fill_section, font_section)
+ws.merge_cells("B4:I4")
+for col, title in [
+    ("B", "Прокат"),
+    ("C", "Сечение"),
+    ("D", "Кол-во"),
+    ("E", "Ед."),
+    ("F", "Цена поставщика, ₽/шт (6м)"),
+    ("G", "С наценкой менеджера"),
+    ("H", "Себестоимость"),
+    ("I", "Наценка менеджера"),
+    ("J", "Вес 6м, кг"),
+]:
+    header_cell(ws[f"{col}5"], title)
+
+prokat_first = 6
+for i, (group, sect, weight, price) in enumerate(PROKAT):
+    r = prokat_first + i
+    ws[f"B{r}"] = group
+    ws[f"C{r}"] = sect
+    ws[f"D{r}"] = 0
+    ws[f"E{r}"] = "шт"
+    ws[f"F{r}"] = price
+    ws[f"J{r}"] = weight
+    ws[f"H{r}"] = f'=IF(OR(D{r}="",F{r}=""),0,D{r}*F{r})'
+    ws[f"G{r}"] = f"=H{r}*(1+Параметры!$C$6)"
+    ws[f"I{r}"] = f"=H{r}*Параметры!$C$6"
+    for col in ["B", "C", "D", "E", "F", "J"]:
+        ws[f"{col}{r}"].fill = fill_input
+        ws[f"{col}{r}"].border = thin
+    # цена и вес — каталог: цена можно менять при обновлении прайса
+    ws[f"J{r}"].fill = fill_soft
+    for col in ["G", "H", "I"]:
+        calc_cell(ws[f"{col}{r}"], fmt=money)
+    ws[f"F{r}"].number_format = money
+    ws[f"J{r}"].number_format = "0.0"
+
+prokat_last = prokat_first + len(PROKAT) - 1  # 36
+prokat_total_row = prokat_last + 1  # 37
+
+ws[f"F{prokat_total_row}"] = "Прокат — себестоимость:"
+ws[f"F{prokat_total_row}"].font = font_bold
+calc_cell(ws[f"G{prokat_total_row}"], f"=SUM(G{prokat_first}:G{prokat_last})", money, bold=True)
+calc_cell(ws[f"H{prokat_total_row}"], f"=SUM(H{prokat_first}:H{prokat_last})", money, bold=True)
+calc_cell(ws[f"I{prokat_total_row}"], f"=SUM(I{prokat_first}:I{prokat_last})", money, bold=True)
+ws[f"B{prokat_total_row}"] = "Итого прокат"
+ws[f"B{prokat_total_row}"].font = font_bold
+
+# --- Плазма / лазер: 10 позиций ---
+plasma_title = prokat_total_row + 2
+header_cell(ws[f"B{plasma_title}"], "ПЛАЗМА / ЛАЗЕР (до 10 позиций)", fill_section, font_section)
+ws.merge_cells(f"B{plasma_title}:I{plasma_title}")
+plasma_hdr = plasma_title + 2
+for col, title in [
+    ("B", "Позиция"),
+    ("C", "Сечение / описание"),
+    ("D", "Кол-во"),
+    ("E", "Ед."),
+    ("F", "Цена поставщика"),
+    ("G", "Сумма"),
+    ("H", "Себестоимость"),
+    ("I", "Наценка"),
+]:
+    header_cell(ws[f"{col}{plasma_hdr}"], title)
+plasma_first = plasma_hdr + 1
+plasma_last = plasma_first + 9  # 10 rows
+for r in range(plasma_first, plasma_last + 1):
+    ws[f"D{r}"] = 0
+    ws[f"E{r}"] = "шт"
+    ws[f"F{r}"] = 0
+    ws[f"H{r}"] = f'=IF(OR(D{r}="",F{r}=""),0,D{r}*F{r})'
+    ws[f"G{r}"] = f"=H{r}"
+    ws[f"I{r}"] = 0
+    for col in ["B", "C", "D", "E", "F"]:
+        ws[f"{col}{r}"].fill = fill_input
+        ws[f"{col}{r}"].border = thin
+    for col in ["G", "H", "I"]:
+        calc_cell(ws[f"{col}{r}"], fmt=money)
+    ws[f"F{r}"].number_format = money
+plasma_total_row = plasma_last + 1
+ws[f"F{plasma_total_row}"] = "Плазма/лазер — себестоимость:"
+calc_cell(ws[f"H{plasma_total_row}"], f"=SUM(H{plasma_first}:H{plasma_last})", money, bold=True)
+
+# --- Ковка: 10 позиций ---
+forge_title = plasma_total_row + 2
+header_cell(ws[f"B{forge_title}"], "КОВАНЫЕ ЭЛЕМЕНТЫ / СПЕЦ. ПРОКАТ (до 10 позиций)", fill_section, font_section)
+ws.merge_cells(f"B{forge_title}:I{forge_title}")
+forge_hdr = forge_title + 2
+for col, title in [
+    ("B", "Элемент / артикул"),
+    ("C", "Сечение"),
+    ("D", "Кол-во"),
+    ("E", "Ед."),
+    ("F", "Цена поставщика"),
+    ("G", "С наценкой"),
+    ("H", "Себестоимость"),
+    ("I", "Наценка менеджера"),
+]:
+    header_cell(ws[f"{col}{forge_hdr}"], title)
+forge_first = forge_hdr + 1
+forge_last = forge_first + 9
+# seed a couple of known arts from old template
+seed_forge = [("11.032", "12х6", 50), ("41.401", "12", 230)]
+for idx, r in enumerate(range(forge_first, forge_last + 1)):
+    if idx < len(seed_forge):
+        ws[f"B{r}"], ws[f"C{r}"], price = seed_forge[idx]
+        ws[f"F{r}"] = price
+    else:
+        ws[f"F{r}"] = 0
+    ws[f"D{r}"] = 0
+    ws[f"E{r}"] = "шт"
+    ws[f"H{r}"] = f'=IF(OR(D{r}="",F{r}=""),0,D{r}*F{r})'
+    ws[f"G{r}"] = f"=H{r}*(1+Параметры!$C$6)"
+    ws[f"I{r}"] = f"=H{r}*Параметры!$C$6"
+    for col in ["B", "C", "D", "E", "F"]:
+        ws[f"{col}{r}"].fill = fill_input
+        ws[f"{col}{r}"].border = thin
+    for col in ["G", "H", "I"]:
+        calc_cell(ws[f"{col}{r}"], fmt=money)
+    ws[f"F{r}"].number_format = money
+forge_total_row = forge_last + 1
+ws[f"F{forge_total_row}"] = "Ковка — себестоимость:"
+calc_cell(ws[f"G{forge_total_row}"], f"=SUM(G{forge_first}:G{forge_last})", money, bold=True)
+calc_cell(ws[f"H{forge_total_row}"], f"=SUM(H{forge_first}:H{forge_last})", money, bold=True)
+calc_cell(ws[f"I{forge_total_row}"], f"=SUM(I{forge_first}:I{forge_last})", money, bold=True)
+
+# --- Токарка: 10 позиций ---
+turn_title = forge_total_row + 2
+header_cell(ws[f"B{turn_title}"], "ТОКАРНЫЕ РАБОТЫ (до 10 позиций)", fill_section, font_section)
+ws.merge_cells(f"B{turn_title}:I{turn_title}")
+turn_hdr = turn_title + 2
+for col, title in [
+    ("B", "Позиция"),
+    ("C", "Сечение / описание"),
+    ("D", "Кол-во"),
+    ("E", "Ед."),
+    ("F", "Цена"),
+    ("G", "Сумма"),
+    ("H", "Себестоимость"),
+    ("I", "Наценка"),
+]:
+    header_cell(ws[f"{col}{turn_hdr}"], title)
+turn_first = turn_hdr + 1
+turn_last = turn_first + 9
+for r in range(turn_first, turn_last + 1):
+    ws[f"D{r}"] = 0
+    ws[f"E{r}"] = "шт"
+    ws[f"F{r}"] = 0
+    ws[f"H{r}"] = f'=IF(OR(D{r}="",F{r}=""),0,D{r}*F{r})'
+    ws[f"G{r}"] = f"=H{r}"
+    ws[f"I{r}"] = 0
+    for col in ["B", "C", "D", "E", "F"]:
+        ws[f"{col}{r}"].fill = fill_input
+        ws[f"{col}{r}"].border = thin
+    for col in ["G", "H", "I"]:
+        calc_cell(ws[f"{col}{r}"], fmt=money)
+    ws[f"F{r}"].number_format = money
+turn_total_row = turn_last + 1
+ws[f"F{turn_total_row}"] = "Токарка — себестоимость:"
+calc_cell(ws[f"H{turn_total_row}"], f"=SUM(H{turn_first}:H{turn_last})", money, bold=True)
+
+grand_row = turn_total_row + 2
+ws[f"F{grand_row}"] = "ВСЕГО металл — себестоимость:"
+ws[f"F{grand_row}"].font = font_bold
+calc_cell(
+    ws[f"H{grand_row}"],
+    f"=H{prokat_total_row}+H{plasma_total_row}+H{forge_total_row}+H{turn_total_row}",
+    money,
+    bold=True,
+)
+ws[f"H{grand_row}"].fill = fill_good
+ws[f"H{grand_row}"].font = font_big
+
+ws[f"F{grand_row + 1}"] = "ВСЕГО наценка менеджера с металла (прокат+ковка):"
+ws[f"F{grand_row + 1}"].font = font_bold
+calc_cell(ws[f"H{grand_row + 1}"], f"=I{prokat_total_row}+I{forge_total_row}", money, bold=True)
+ws[f"H{grand_row + 1}"].fill = fill_good
+
+ws[f"B{grand_row + 3}"] = (
+    "Обновление прайса: меняйте жёлтые цены в колонке F. Кол-во D — под конкретный заказ. "
+    "Итоги уходят в Калькуляцию автоматически."
+)
+ws[f"B{grand_row + 3}"].font = font_note
+ws.merge_cells(f"B{grand_row + 3}:J{grand_row + 4}")
+
+set_col_widths(
+    ws,
+    {"A": 3, "B": 18, "C": 16, "D": 10, "E": 8, "F": 26, "G": 18, "H": 16, "I": 18, "J": 12},
+)
+ws.freeze_panes = "B6"
+ws.auto_filter.ref = f"B5:J{prokat_last}"
+
+# Сохраняем адреса итогов для связи
+METAL_LINKS = {
+    "prokat": f"Металл!H{prokat_total_row}",
+    "plasma": f"Металл!H{plasma_total_row}",
+    "forge": f"Металл!H{forge_total_row}",
+    "turn": f"Металл!H{turn_total_row}",
+}
+print("Metal totals:", METAL_LINKS, "prokat rows", prokat_first, prokat_last)
 
 # =============================================================================
 # Калькуляция
@@ -470,17 +737,17 @@ for item in rows:
         ws[f"E{r}"] = "=Параметры!$C$10"
         ws[f"L{r}"] = "Ставка аренды из Параметры"
     elif special == "metal_cost":
-        ws[f"E{r}"] = "=Металл!H19"
+        ws[f"E{r}"] = f"={METAL_LINKS['prokat']}"
         ws[f"F{r}"] = 1
-        ws[f"L{r}"] = "Себестоимость проката (цена поставщика)"
+        ws[f"L{r}"] = "Себестоимость проката (каталог, цена за шт 6м)"
     elif special == "metal_plasma":
-        ws[f"E{r}"] = "=Металл!H28"
+        ws[f"E{r}"] = f"={METAL_LINKS['plasma']}"
         ws[f"F{r}"] = 1
     elif special == "metal_forge":
-        ws[f"E{r}"] = "=Металл!H39"
+        ws[f"E{r}"] = f"={METAL_LINKS['forge']}"
         ws[f"F{r}"] = 1
     elif special == "metal_turn":
-        ws[f"E{r}"] = "=Металл!H48"
+        ws[f"E{r}"] = f"={METAL_LINKS['turn']}"
         ws[f"F{r}"] = 1
     else:
         ws[f"E{r}"] = price if price is not None else 0
@@ -520,7 +787,7 @@ for r in range(last_data_row + 1, last_data_row + 21):
     dv_type.add(ws[f"D{r}"])
 
 ws[f"B{last_data_row + 22}"] = (
-    "Пустые строки ниже — для своих позиций. Тип «закупка» включает наценку менеджера автоматически."
+    "Пустые строки — для своих позиций. Тип «закупка» включает наценку менеджера автоматически."
 )
 ws[f"B{last_data_row + 22}"].font = font_note
 
@@ -538,7 +805,7 @@ set_col_widths(
         "I": 16,
         "J": 12,
         "K": 3,
-        "L": 36,
+        "L": 40,
         "M": 3,
         "N": 28,
         "O": 14,
@@ -548,236 +815,69 @@ ws.freeze_panes = "B16"
 ws.auto_filter.ref = f"B15:L{last_data_row + 20}"
 
 # =============================================================================
-# Металл
+# Касса — упрощённая, явно опциональная
 # =============================================================================
-ws = wb.create_sheet("Металл", 2)
-ws["B2"] = "МЕТАЛЛ И КОМПЛЕКТУЮЩИЕ"
+ws = wb.create_sheet("Касса", 3)
+ws["B2"] = "КАССА ЗАКАЗА — опционально (после сделки)"
 ws["B2"].font = font_title
-ws.merge_cells("B2:I2")
+ws.merge_cells("B2:E2")
+
 ws["B3"] = (
-    "F — цена поставщика (обновляйте по прайсу). D — кол-во под заказ. "
-    "Наценка менеджера: себестоимость × % (исправлена ошибка старого шаблона G×15%)."
+    "ЭТОТ ЛИСТ НЕ УЧАСТВУЕТ В РАСЧЁТЕ ЦЕНЫ И МАРЖИ.\n"
+    "Нужен только чтобы помнить: сколько клиент уже заплатил и сколько вы уже потратили по заказу.\n"
+    "Если считаете только КП — этот лист можно полностью игнорировать.\n"
+    "\n"
+    "Связь со Сводкой: одна — подтягивает «Цену КП» (сколько договорились), чтобы показать остаток к получению.\n"
+    "Обратно в Сводку / Калькуляцию / Металл касса НИЧЕГО не отправляет."
 )
-ws["B3"].font = font_note
-ws.merge_cells("B3:I3")
+ws["B3"].font = font_label
+ws["B3"].fill = fill_warn
+ws["B3"].alignment = Alignment(wrap_text=True, vertical="top")
+ws.merge_cells("B3:E7")
+ws.row_dimensions[3].height = 20
+ws.row_dimensions[4].height = 18
+ws.row_dimensions[5].height = 18
+ws.row_dimensions[6].height = 18
+ws.row_dimensions[7].height = 18
 
-header_cell(ws["B4"], "ПРОКАТ", fill_section, font_section)
-ws.merge_cells("B4:I4")
-for col, title in [
-    ("B", "Прокат"),
-    ("C", "Сечение"),
-    ("D", "Кол-во"),
-    ("E", "Ед."),
-    ("F", "Цена поставщика"),
-    ("G", "С наценкой менеджера"),
-    ("H", "Себестоимость"),
-    ("I", "Наценка менеджера"),
-]:
-    header_cell(ws[f"{col}5"], title)
-
-prokat = [
-    ("Труба профильная", "15х15х1.5", 0, "шт", 1200),
-    ("Труба профильная", "15х15х2.0", 0, "шт", 650),
-    ("Труба профильная", "20х20х1.5", 0, "шт", 575.7),
-    ("Труба профильная", "20х20х2.0", 0, "шт", None),
-    ("Труба профильная", "50х25", 0, "шт", 1200),
-    ("Труба профильная", "40х20", 0, "шт", 850),
-    ("Круг", "40х40х1.5", 0, "шт", 750),
-    ("Квадрат", "40х40х2.0", 0, "шт", 690),
-    ("Квадрат", "40х40х3.0", 0, "шт", None),
-    ("Лист", "10х10", 0, "шт", None),
-    ("Лист", "12х12", 0, "шт", None),
-    ("Лист", "14х14", 0, "шт", None),
-    ("Лист", "16х16", 0, "шт", None),
-]
-for i, (name, sect, qty, unit, price) in enumerate(prokat):
-    r = 6 + i
-    ws[f"B{r}"] = name
-    ws[f"C{r}"] = sect
-    ws[f"D{r}"] = qty
-    ws[f"E{r}"] = unit
-    if price is not None:
-        ws[f"F{r}"] = price
-    ws[f"H{r}"] = f'=IF(OR(D{r}="",F{r}=""),0,D{r}*F{r})'
-    ws[f"G{r}"] = f"=H{r}*(1+Параметры!$C$6)"
-    ws[f"I{r}"] = f"=H{r}*Параметры!$C$6"
-    for col in ["B", "C", "D", "E", "F"]:
-        ws[f"{col}{r}"].fill = fill_input
-        ws[f"{col}{r}"].border = thin
-    for col in ["G", "H", "I"]:
-        calc_cell(ws[f"{col}{r}"], fmt=money)
-    ws[f"F{r}"].number_format = money
-
-ws["F19"] = "Прокат — себестоимость:"
-ws["F19"].font = font_bold
-calc_cell(ws["G19"], "=SUM(G6:G18)", money, bold=True)
-calc_cell(ws["H19"], "=SUM(H6:H18)", money, bold=True)
-calc_cell(ws["I19"], "=SUM(I6:I18)", money, bold=True)
-
-header_cell(ws["B21"], "ПЛАЗМА / ЛАЗЕР", fill_section, font_section)
-ws.merge_cells("B21:I21")
-for col, title in [
-    ("B", "Позиция"),
-    ("C", "Сечение"),
-    ("D", "Кол-во"),
-    ("E", "Ед."),
-    ("F", "Цена поставщика"),
-    ("G", "Сумма"),
-    ("H", "Себестоимость"),
-    ("I", "Наценка"),
-]:
-    header_cell(ws[f"{col}23"], title)
-for r in range(24, 28):
-    ws[f"D{r}"] = 0
-    ws[f"E{r}"] = "шт"
-    ws[f"F{r}"] = 0
-    ws[f"H{r}"] = f'=IF(OR(D{r}="",F{r}=""),0,D{r}*F{r})'
-    ws[f"G{r}"] = f"=H{r}"
-    ws[f"I{r}"] = 0
-    for col in ["B", "C", "D", "E", "F"]:
-        ws[f"{col}{r}"].fill = fill_input
-        ws[f"{col}{r}"].border = thin
-    for col in ["G", "H", "I"]:
-        calc_cell(ws[f"{col}{r}"], fmt=money)
-    ws[f"F{r}"].number_format = money
-ws["F28"] = "Плазма — себестоимость:"
-calc_cell(ws["H28"], "=SUM(H24:H27)", money, bold=True)
-
-header_cell(ws["B30"], "КОВАНЫЕ ЭЛЕМЕНТЫ / СПЕЦ. ПРОКАТ", fill_section, font_section)
-ws.merge_cells("B30:I30")
-for col, title in [
-    ("B", "Элемент"),
-    ("C", "Сечение"),
-    ("D", "Кол-во"),
-    ("E", "Ед."),
-    ("F", "Цена поставщика"),
-    ("G", "С наценкой"),
-    ("H", "Себестоимость"),
-    ("I", "Наценка менеджера"),
-]:
-    header_cell(ws[f"{col}32"], title)
-forge = [
-    ("11.032", "12х6", 0, "шт", 50),
-    ("41.401", "12", 0, "шт", 230),
-    ("", "", 0, "шт", 2500),
-    ("", "", 0, "шт", 200),
-    ("", "", 0, "шт", 0),
-    ("", "", 0, "шт", 0),
-]
-for i, (el, sect, qty, unit, price) in enumerate(forge):
-    r = 33 + i
-    ws[f"B{r}"] = el
-    ws[f"C{r}"] = sect
-    ws[f"D{r}"] = qty
-    ws[f"E{r}"] = unit
-    ws[f"F{r}"] = price
-    ws[f"H{r}"] = f'=IF(OR(D{r}="",F{r}=""),0,D{r}*F{r})'
-    ws[f"G{r}"] = f"=H{r}*(1+Параметры!$C$6)"
-    ws[f"I{r}"] = f"=H{r}*Параметры!$C$6"
-    for col in ["B", "C", "D", "E", "F"]:
-        ws[f"{col}{r}"].fill = fill_input
-        ws[f"{col}{r}"].border = thin
-    for col in ["G", "H", "I"]:
-        calc_cell(ws[f"{col}{r}"], fmt=money)
-    ws[f"F{r}"].number_format = money
-
-ws["F39"] = "Ковка — себестоимость:"
-calc_cell(ws["G39"], "=SUM(G33:G38)", money, bold=True)
-calc_cell(ws["H39"], "=SUM(H33:H38)", money, bold=True)
-calc_cell(ws["I39"], "=SUM(I33:I38)", money, bold=True)
-
-header_cell(ws["B41"], "ТОКАРНЫЕ РАБОТЫ", fill_section, font_section)
-ws.merge_cells("B41:I41")
-for col, title in [
-    ("B", "Позиция"),
-    ("C", "Сечение"),
-    ("D", "Кол-во"),
-    ("E", "Ед."),
-    ("F", "Цена"),
-    ("G", "Сумма"),
-    ("H", "Себестоимость"),
-    ("I", "Наценка"),
-]:
-    header_cell(ws[f"{col}43"], title)
-for r in range(44, 48):
-    ws[f"D{r}"] = 0
-    ws[f"E{r}"] = "шт"
-    ws[f"F{r}"] = 0
-    ws[f"H{r}"] = f'=IF(OR(D{r}="",F{r}=""),0,D{r}*F{r})'
-    ws[f"G{r}"] = f"=H{r}"
-    ws[f"I{r}"] = 0
-    for col in ["B", "C", "D", "E", "F"]:
-        ws[f"{col}{r}"].fill = fill_input
-        ws[f"{col}{r}"].border = thin
-    for col in ["G", "H", "I"]:
-        calc_cell(ws[f"{col}{r}"], fmt=money)
-    ws[f"F{r}"].number_format = money
-ws["F48"] = "Токарка — себестоимость:"
-calc_cell(ws["H48"], "=SUM(H44:H47)", money, bold=True)
-
-ws["F50"] = "ВСЕГО металл — себестоимость:"
-ws["F50"].font = font_bold
-calc_cell(ws["H50"], "=H19+H28+H39+H48", money, bold=True)
-ws["H50"].fill = fill_good
-ws["H50"].font = font_big
-
-ws["F51"] = "ВСЕГО наценка менеджера с металла:"
-ws["F51"].font = font_bold
-calc_cell(ws["H51"], "=I19+I39", money, bold=True)
-ws["H51"].fill = fill_good
-
-ws["B53"] = (
-    "Следующий этап: вынести цены в отдельный справочник поставщика; "
-    "в заказе оставить кол-во. Связь с Калькуляцией уже через H19 / H28 / H39 / H48."
-)
-ws["B53"].font = font_note
-ws.merge_cells("B53:I54")
-set_col_widths(ws, {"A": 3, "B": 22, "C": 14, "D": 10, "E": 8, "F": 18, "G": 18, "H": 16, "I": 18})
-ws.freeze_panes = "B6"
-
-# =============================================================================
-# Касса
-# =============================================================================
-ws = wb.create_sheet("Касса заказа", 3)
-ws["B2"] = "КАССА ЗАКАЗА (не путать с прибылью)"
-ws["B2"].font = font_title
-ws.merge_cells("B2:D2")
-ws["B3"] = "Только деньги: сколько получили и сколько выплатили. Прибыль — на листе Сводка."
-ws["B3"].font = font_note
-
-header_cell(ws["B5"], "ПРИХОДЫ ОТ КЛИЕНТА", fill_section, font_section)
-ws.merge_cells("B5:D5")
-for col, title in [("B", "Дата"), ("C", "Основание"), ("D", "Сумма")]:
-    header_cell(ws[f"{col}6"], title)
-for r in range(7, 12):
+header_cell(ws["B9"], "1) СКОЛЬКО ПОЛУЧИЛИ ОТ КЛИЕНТА", fill_section, font_section)
+ws.merge_cells("B9:D9")
+for col, title in [("B", "Дата"), ("C", "Что за платёж"), ("D", "Сумма")]:
+    header_cell(ws[f"{col}10"], title)
+for r in range(11, 16):
     for col in ["B", "C", "D"]:
         input_cell(ws[f"{col}{r}"])
     ws[f"D{r}"].number_format = money
-ws["C12"] = "Итого получено:"
-calc_cell(ws["D12"], "=SUM(D7:D11)", money, bold=True)
-ws["C13"] = "Цена КП (из Сводки):"
-calc_cell(ws["D13"], "=Сводка!D24", money)
-ws["C14"] = "Остаток к получению:"
-calc_cell(ws["D14"], "=D13-D12", money, bold=True)
-ws["D14"].fill = fill_warn
+ws["C16"] = "Всего получено:"
+calc_cell(ws["D16"], "=SUM(D11:D15)", money, bold=True)
+ws["C17"] = "Цена КП (из Сводки, только для справки):"
+calc_cell(ws["D17"], "=Сводка!D24", money)
+ws["C18"] = "Ещё должен клиент:"
+calc_cell(ws["D18"], "=D17-D16", money, bold=True)
+ws["D18"].fill = fill_warn
 
-header_cell(ws["B16"], "РАСХОДЫ ПО ЗАКАЗУ (факт выплат)", fill_section, font_section)
-ws.merge_cells("B16:D16")
-for col, title in [("B", "Дата"), ("C", "Основание"), ("D", "Сумма")]:
-    header_cell(ws[f"{col}17"], title)
-for r in range(18, 43):
+header_cell(ws["B20"], "2) СКОЛЬКО УЖЕ ВЫПЛАТИЛИ ПО ЗАКАЗУ", fill_section, font_section)
+ws.merge_cells("B20:D20")
+for col, title in [("B", "Дата"), ("C", "Кому / за что"), ("D", "Сумма")]:
+    header_cell(ws[f"{col}21"], title)
+for r in range(22, 42):
     for col in ["B", "C", "D"]:
         input_cell(ws[f"{col}{r}"])
     ws[f"D{r}"].number_format = money
-ws["C44"] = "Итого выплат:"
-calc_cell(ws["D44"], "=SUM(D18:D42)", money, bold=True)
-ws["C45"] = "Касса заказа (получено − выплачено):"
-calc_cell(ws["D45"], "=D12-D44", money, bold=True)
-ws["D45"].fill = fill_good
-ws["D45"].font = font_big
-ws["B47"] = "Это не прибыль. Прибыль = цена КП − себестоимость − НПД − агентские (Сводка)."
-ws["B47"].font = font_note
-set_col_widths(ws, {"A": 3, "B": 14, "C": 44, "D": 16})
+ws["C43"] = "Всего выплат:"
+calc_cell(ws["D43"], "=SUM(D22:D41)", money, bold=True)
+ws["C44"] = "Живые деньги по заказу сейчас (получено − выплаты):"
+calc_cell(ws["D44"], "=D16-D43", money, bold=True)
+ws["D44"].fill = fill_good
+ws["D44"].font = font_big
+
+ws["B46"] = (
+    "Пример: КП 100 000, аванс 50 000, купили металл 20 000 → получено 50 000, выплат 20 000, "
+    "в кассе заказа 30 000. Прибыль при этом смотрите на Сводке, не здесь."
+)
+ws["B46"].font = font_note
+ws.merge_cells("B46:E47")
+set_col_widths(ws, {"A": 3, "B": 14, "C": 48, "D": 16, "E": 14})
 
 # =============================================================================
 # Инструкция
@@ -786,29 +886,40 @@ ws = wb.create_sheet("Инструкция", 4)
 ws["B2"] = "Как работать с файлом"
 ws["B2"].font = font_title
 steps = [
-    "1. «Параметры» — наценка менеджера 15%, целевая маржа 20%, мин. маржа 10%, НПД 4% или 6%, аренда 2000 ₽/день.",
-    "2. «Металл» — кол-во и цены поставщика. Наценка менеджера считается как себестоимость × %.",
-    "3. «Калькуляция» — количества по этапам. Тип «закупка» → наценка менеджера. Аренда из Параметров.",
-    "4. «Сводка» — себестоимость и рекомендуемая цена. Введите цену КП в D24. Смотрите статус.",
-    "5. Таблица гибкой маржи 10%…35% — чтобы торговаться и не уходить ниже минимума.",
-    "6. «Касса заказа» — авансы и факт выплат. Не смешивать с маржой.",
+    "ГЛАВНЫЙ КОНТУР (для цены КП):",
+    "1. «Параметры» — % менеджера, целевая/мин. маржа, НПД, аренда/день.",
+    "2. «Металл» — в каталоге проката поставьте кол-во штанг (шт = 6 м). Цены уже загружены; при смене прайса правьте колонку F.",
+    "3. «Калькуляция» — количества по этапам (дни, рейсы, материалы).",
+    "4. «Сводка» — смотрите рекомендуемую цену, впишите цену КП в жёлтую ячейку, проверьте статус.",
     "",
-    "Уточнение про «нормы»: шаблоны расхода (например, на 1 м забора — X кг профиля и Y часов). "
-    "Если их нет — каждый заказ считаем с нуля. Позже можно сделать заготовки под Ворота/Забор/Лестница.",
+    "КАССА — НЕ ДЛЯ РАСЧЁТА ЦЕНЫ:",
+    "• Нужна после сделки: авансы клиента и факт выплат (металл, ЗП, транспорт).",
+    "• Из Сводки берёт только «Цену КП», чтобы показать остаток к получению.",
+    "• В Сводку / маржу / калькуляцию ничего не возвращает.",
+    "• Пока готовите КП — лист Касса можно не открывать.",
     "",
-    "Следующий этап по вашему запросу: справочник металла с ценами поставщика и связью с заказом.",
+    "Типы изделий: Ворота, Забор, Лестница, Мебель, Интерьер, Экстерьер, Сувенир, Прочее.",
+    "В шапке Сводки: Клиент + № клиента.",
 ]
 for i, s in enumerate(steps):
-    ws[f"B{4+i}"] = s
-    ws[f"B{4+i}"].font = font_label
+    ws[f"B{4 + i}"] = s
+    ws[f"B{4 + i}"].font = font_bold if s.endswith(":") else font_label
 set_col_widths(ws, {"A": 3, "B": 120})
 
-order = ["Сводка", "Калькуляция", "Металл", "Параметры", "Касса заказа", "Инструкция"]
-for i, name in enumerate(order):
+# Порядок листов: Сводка, Калькуляция, Металл, Параметры, Касса, Инструкция
+desired = ["Сводка", "Калькуляция", "Металл", "Параметры", "Касса", "Инструкция"]
+for i, name in enumerate(desired):
     wb.move_sheet(name, offset=i - wb.sheetnames.index(name))
 
 path = "/workspace/templates/Калькуляция_проект_v1.xlsx"
 wb.save(path)
+# ASCII copy for easier local open
+wb.save("/workspace/templates/Kalkulyaciya_proekt_v1.xlsx")
 print("Saved", path)
 print("Sheets:", wb.sheetnames)
-print("Last calc template row:", last_data_row)
+print(
+    f"Prokat {prokat_first}-{prokat_last} total@{prokat_total_row}; "
+    f"plasma {plasma_first}-{plasma_last} @{plasma_total_row}; "
+    f"forge {forge_first}-{forge_last} @{forge_total_row}; "
+    f"turn {turn_first}-{turn_last} @{turn_total_row}"
+)
